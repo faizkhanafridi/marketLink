@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 // Public
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-
+Route::get('/categories', fn() => response()->json(\App\Models\Category::all()));
 Route::get('/markets', [MarketController::class, 'index']);
 Route::get('/markets/nearby', [MarketController::class, 'nearby']);
 Route::get('/markets/{id}', [MarketController::class, 'show']);
@@ -57,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
         Route::post('/reviews/{id}/reply', [ReviewController::class, 'reply']);
+
+        Route::post('/upload/product-image', [\App\Http\Controllers\Api\UploadController::class, 'productImage']);
     });
 
     // Admin
@@ -65,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users', [AdminController::class, 'users']);
         Route::patch('/users/{id}/approve', [AdminController::class, 'approveFarmer']);
         Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
+        Route::get('/reviews', [AdminController::class, 'reviews']);
+Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
         Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
         Route::get('/reports', [AdminController::class, 'reports']);
 

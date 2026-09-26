@@ -23,30 +23,33 @@ class FarmerController extends Controller
         );
     }
 
-    public function updateProfile(Request $request): JsonResponse
-    {
-        $profile = $request->user()->farmerProfile;
-        if (!$profile) {
-            return response()->json(['message' => 'Not a farmer'], 403);
-        }
-
-        $data = $request->validate([
-            'stall_name'       => 'sometimes|string|max:100',
-            'contact_person'   => 'sometimes|string|max:100',
-            'description'      => 'nullable|string',
-            'market_id'        => 'nullable|exists:markets,market_id',
-            'operating_days'   => 'nullable|string|max:100',
-            'pickup_window'    => 'nullable|string|max:100',
-            'address'          => 'nullable|string',
-            'latitude'         => 'nullable|numeric',
-            'longitude'        => 'nullable|numeric',
-            'order_cutoff_time'=> 'nullable',
-        ]);
-
-        $profile->update($data);
-
-        return response()->json(['message' => 'Profile updated', 'profile' => $profile]);
+  public function updateProfile(Request $request): JsonResponse
+{
+    $profile = $request->user()->farmerProfile;
+    if (!$profile) {
+        return response()->json(['message' => 'Not a farmer'], 403);
     }
+
+    $data = $request->validate([
+        'stall_name'        => 'sometimes|string|max:100',
+        'contact_person'    => 'sometimes|string|max:100',
+        'description'       => 'nullable|string',
+        'market_id'         => 'nullable|integer|exists:markets,market_id',
+        'operating_days'    => 'nullable|string|max:100',
+        'pickup_window'     => 'nullable|string|max:100',
+        'address'           => 'nullable|string',
+        'latitude'          => 'nullable|numeric|between:-90,90',
+        'longitude'         => 'nullable|numeric|between:-180,180',
+        'order_cutoff_time' => 'nullable|string|max:100',
+    ]);
+
+    $profile->update($data);
+
+    return response()->json([
+        'message' => 'Profile updated',
+        'profile' => $profile->fresh(),
+    ]);
+}
 
     public function dashboard(Request $request): JsonResponse
     {

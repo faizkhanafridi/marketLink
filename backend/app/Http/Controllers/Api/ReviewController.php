@@ -38,7 +38,7 @@ class ReviewController extends Controller
 
         $data['customer_id'] = $request->user()->user_id;
         $review = $this->reviewRepo->create($data);
-
+    $review->load('customer', 'product');
         return response()->json(['message' => 'Review added', 'review' => $review], 201);
     }
 
@@ -51,6 +51,7 @@ class ReviewController extends Controller
         }
 
         $review = $this->reviewRepo->addFarmerReply($id, $request->reply);
+         $review->load('customer', 'product');
         return response()->json(['message' => 'Reply added', 'review' => $review]);
     }
 }

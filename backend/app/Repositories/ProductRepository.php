@@ -34,9 +34,10 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         if (!empty($filters['search'])) {
             $query->where('name', 'like', '%' . $filters['search'] . '%');
         }
-        if (isset($filters['is_available'])) {
-            $query->where('is_available', $filters['is_available']);
-        }
+      if (isset($filters['is_available']) && $filters['is_available'] !== '') {
+    $available = filter_var($filters['is_available'], FILTER_VALIDATE_BOOLEAN);
+    $query->where('is_available', $available);
+}
 
         return $query->paginate($filters['per_page'] ?? 15);
     }

@@ -46,6 +46,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $user = $this->userRepo->findByEmail($request->email);
+        $user->load('farmerProfile');   //
 
         if (!$user || !Hash::check($request->password, $user->password_hash)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
@@ -66,7 +67,8 @@ class AuthController extends Controller
 
     public function profile(Request $request): JsonResponse
     {
-        return response()->json(new UserResource($request->user()));
+        return response()->json(new UserResource($request->user()->load('farmerProfile'))); // ← ADD load
+
     }
 
     public function logout(Request $request): JsonResponse
@@ -74,4 +76,4 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out']);
     }
-}   
+}

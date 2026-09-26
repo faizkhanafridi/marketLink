@@ -19,6 +19,8 @@ class UserResource extends JsonResource
             'is_active'      => $this->is_active,
             'is_approved'    => $this->is_approved,
             'created_at'     => $this->created_at,
+                    'farmer_profile' => $this->whenLoaded('farmerProfile'), // ← ADD
+
         ];
     }
 }

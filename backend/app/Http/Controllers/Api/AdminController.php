@@ -82,4 +82,13 @@ class AdminController extends Controller
         Category::findOrFail($id)->delete();
         return response()->json(['message' => 'Category deleted']);
     }
+
+    public function reviews(): JsonResponse
+{
+    $reviews = Review::with(['customer', 'product', 'farmer'])
+        ->orderByDesc('created_at')
+        ->get();
+
+    return response()->json($reviews);
+}
 }
