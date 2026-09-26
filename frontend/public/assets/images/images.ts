@@ -1,0 +1,18 @@
+
+export const basketHarvest3DImg =
+  'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80';
+
+export const heroMarket3DImg =
+  'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=2000&q=80';
+
+export const iconProduce3D =
+  'https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=300&q=80';
+
+export const iconMarket3D =
+  'https://images.unsplash.com/photo-1595246140625-573b715d11dc?auto=format&fit=crop&w=300&q=80';
+
+export const iconPickup3D =
+  'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=300&q=80';
+
+export const iconHoney3D =
+  'https://images.unsplash.com/photo-1587049354709-4a7b1b6ccd9e?auto=format&fit=crop&w=300&q=80';

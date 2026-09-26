@@ -1,0 +1,10 @@
+export { authApi } from './authApi';
+export { productApi } from './productApi';
+export { orderApi } from './orderApi';
+export { farmerApi } from './farmerApi';
+export { marketApi } from './marketApi';
+export { reviewApi } from './reviewApi';
+export { favoriteApi } from './favoriteApi';
+export { adminApi } from './adminApi';
+export { default as axiosInstance } from './axiosConfig';
+export { categoryApi } from './categoryApi';   // ← ADD THIS

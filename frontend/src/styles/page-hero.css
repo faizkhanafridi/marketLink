@@ -1,0 +1,153 @@
+/* ============================================================
+   SHARED PAGE HERO — Products / Markets / Farmers
+   ============================================================ */
+
+.products-hero,
+.markets-hero,
+.farmers-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 82px 24px 76px;
+  background:
+    radial-gradient(
+      circle at 78% 25%,
+      rgba(25, 77, 38, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(180deg, #f5f2ec 0%, #faf9f6 100%);
+  border-bottom: 1px solid #ede9e1;
+  
+}
+
+/* Decorative blobs */
+.products-hero-decoration,
+.markets-hero-decoration,
+.farmers-hero-decoration {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.products-hero-decoration-one,
+.markets-hero-decoration-one,
+.farmers-hero-decoration-one {
+  top: -150px;
+  right: 7%;
+  width: 280px;
+  height: 280px;
+  background: rgba(25, 77, 38, 0.045);
+}
+
+.products-hero-decoration-two,
+.markets-hero-decoration-two,
+.farmers-hero-decoration-two {
+  bottom: -180px;
+  left: 30%;
+  width: 280px;
+  height: 280px;
+  background: rgba(166, 137, 92, 0.035);
+}
+
+/* Container + content alignment */
+.products-hero .container,
+.markets-hero .container,
+.farmers-hero .container {
+  position: relative;
+  z-index: 2;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.products-hero-content,
+.markets-hero-content,
+.farmers-hero-content {
+  max-width: 760px;
+}
+
+/* Eyebrow / tag pill */
+.products-page-tag,
+.markets-page-tag,
+.farmers-page-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding: 7px 14px;
+  border: 1px solid #dfe8dc;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #194d26;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.products-page-tag i,
+.markets-page-tag i,
+.farmers-page-tag i {
+  color: #194d26;
+  font-size: 11px;
+}
+
+/* Title */
+.products-page-title,
+.markets-page-title,
+.farmers-page-title {
+  max-width: 720px;
+  margin: 0;
+  color: #1c1917;
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: clamp(38px, 5vw, 62px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.products-page-title span,
+.markets-page-title span,
+.farmers-page-title span {
+  color: #194d26;
+}
+
+/* Subtitle */
+.products-page-subtitle,
+.markets-page-subtitle,
+.farmers-page-subtitle {
+  max-width: 650px;
+  margin: 20px 0 0;
+  color: #6b625b;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .products-hero,
+  .markets-hero,
+  .farmers-hero {
+    padding: 64px 20px 58px;
+  }
+}
+
+@media (max-width: 560px) {
+  .products-hero,
+  .markets-hero,
+  .farmers-hero {
+    padding: 48px 16px 46px;
+  }
+
+  .products-page-title,
+  .markets-page-title,
+  .farmers-page-title {
+    font-size: 38px;
+  }
+
+  .products-page-subtitle,
+  .markets-page-subtitle,
+  .farmers-page-subtitle {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+}

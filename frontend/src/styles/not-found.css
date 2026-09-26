@@ -1,0 +1,336 @@
+/* ============================================================
+   MARKETLINK — 404 NOT FOUND PAGE
+   ============================================================ */
+
+.not-found-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #faf9f6;
+}
+
+.not-found-section {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  padding: 72px 24px 96px;
+  display: flex;
+  align-items: center;
+}
+
+.not-found-section .container {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* --- Ambient background glows --- */
+.nf-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  z-index: 0;
+}
+
+.nf-glow-one {
+  top: -120px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  background: rgba(110, 231, 183, 0.18);
+}
+
+.nf-glow-two {
+  bottom: -160px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: rgba(166, 137, 92, 0.14);
+}
+
+/* --- Layout --- */
+.nf-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 72px;
+  align-items: center;
+}
+
+/* ============================================================
+   VISUAL (SVG)
+   ============================================================ */
+.nf-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nf-visual-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 28px;
+  box-shadow:
+    0 30px 60px -24px rgba(25, 77, 38, 0.18),
+    0 8px 20px -10px rgba(28, 25, 23, 0.06);
+}
+
+.nf-illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Gentle floating animation for the "?" badge */
+.nf-question {
+  transform-origin: 308px 90px;
+  animation: nf-float 3.2s ease-in-out infinite;
+}
+
+@keyframes nf-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.nf-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 520px;
+}
+
+.nf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 7px 14px;
+  background: #eef4e8;
+  border: 1px solid #d8e5cc;
+  border-radius: 100px;
+  color: #194d26;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nf-title {
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: clamp(30px, 4.2vw, 46px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  color: #1c1917;
+  margin: 0;
+}
+
+.nf-title-accent {
+  color: #194d26;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.nf-subtitle {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #57534e;
+  margin: 0;
+  max-width: 480px;
+}
+
+/* --- Action buttons --- */
+.nf-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.nf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.nf-btn-primary {
+  background: #194d26;
+  color: #ffffff;
+  border: 1.5px solid #194d26;
+}
+
+.nf-btn-primary:hover {
+  background: #143e1f;
+  border-color: #143e1f;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px -8px rgba(25, 77, 38, 0.4);
+}
+
+.nf-btn-outline {
+  background: transparent;
+  color: #1c1917;
+  border: 1.5px solid #d6d3d1;
+}
+
+.nf-btn-outline:hover {
+  background: #ffffff;
+  border-color: #194d26;
+  color: #194d26;
+  transform: translateY(-2px);
+}
+
+/* --- Quick links --- */
+.nf-quick-links {
+  margin-top: 14px;
+  padding-top: 22px;
+  border-top: 1px solid #ede9e1;
+}
+
+.nf-quick-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a8a29e;
+  margin-bottom: 12px;
+}
+
+.nf-quick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nf-quick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  color: #44403c;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nf-quick-item svg {
+  color: #a8a29e;
+  transition: color 0.2s ease;
+}
+
+.nf-quick-item:hover {
+  border-color: #b9c9b5;
+  color: #194d26;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px -6px rgba(25, 77, 38, 0.14);
+}
+
+.nf-quick-item:hover svg {
+  color: #194d26;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .nf-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    text-align: center;
+  }
+
+  .nf-visual {
+    order: -1;
+  }
+
+  .nf-visual-card {
+    max-width: 380px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .nf-content {
+    max-width: 100%;
+    align-items: center;
+  }
+
+  .nf-eyebrow {
+    align-self: center;
+  }
+
+  .nf-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nf-actions {
+    justify-content: center;
+  }
+
+  .nf-quick-grid {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .not-found-section {
+    padding: 48px 16px 72px;
+  }
+
+  .nf-visual-card {
+    max-width: 300px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .nf-title {
+    font-size: 28px;
+  }
+
+  .nf-subtitle {
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+
+  .nf-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .nf-btn {
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .nf-quick-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nf-quick-item {
+    justify-content: center;
+  }
+}
