@@ -68,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}/approve', [AdminController::class, 'approveFarmer']);
         Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
         Route::get('/reviews', [AdminController::class, 'reviews']);
-Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
+        Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
         Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
         Route::get('/reports', [AdminController::class, 'reports']);
 
