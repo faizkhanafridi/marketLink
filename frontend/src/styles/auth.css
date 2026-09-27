@@ -1,0 +1,435 @@
+/* ============================================================
+   MARKETLINK — AUTH PAGES (Login / Register / Farmer Register)
+   ============================================================ */
+
+.auth-page {
+  min-height: 100vh;
+  background: #faf9f6;
+  color: #1c1917;
+}
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.auth-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  max-width: 1160px;
+  margin: 56px auto;
+  padding: 0 24px;
+  gap: 32px;
+  align-items: stretch;
+}
+
+.auth-shell-wide {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  max-width: 1240px;
+}
+
+/* ============================================================
+   FORM PANEL
+   ============================================================ */
+.auth-panel-form {
+  background: #ffffff;
+  border: 1px solid #ede9e1;
+  border-radius: 22px;
+  padding: 48px 44px;
+  box-shadow:
+    0 20px 40px -24px rgba(25, 77, 38, 0.1),
+    0 4px 12px -6px rgba(28, 25, 23, 0.04);
+}
+
+.auth-panel-form-wide {
+  padding: 48px 48px;
+}
+
+/* Header */
+.auth-head {
+  margin-bottom: 32px;
+}
+
+.auth-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #143e1f;
+  margin-bottom: 12px;
+}
+
+.auth-heading {
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #1c1917;
+  margin: 0 0 10px;
+}
+
+.auth-heading-accent {
+   color: #194d26;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.auth-lede {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #57534e;
+  margin: 0;
+  max-width: 520px;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.auth-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.auth-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #44403c;
+  letter-spacing: 0.01em;
+}
+
+.auth-required {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.auth-label-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: #194d26;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.auth-label-link:hover {
+  color: #143e1f;
+  text-decoration: underline;
+}
+
+/* Input wrap */
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  background: #fafaf9;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 11px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.auth-input-wrap:focus-within {
+  background: #ffffff;
+  border-color: #b9c9b5;
+  box-shadow: 0 0 0 4px rgba(25, 77, 38, 0.06);
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 14px;
+  color: #a8a29e;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.auth-input-wrap:focus-within .auth-input-icon {
+  color: #194d26;
+}
+
+.auth-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #1c1917;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-input::placeholder {
+  color: #a8a29e;
+}
+
+.auth-input-action {
+  position: absolute;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #78716c;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.auth-input-action:hover {
+  background: #f0ece7;
+  color: #1c1917;
+}
+
+/* Section title inside wide forms */
+.auth-section-title {
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: 15px;
+  font-weight: 800;
+  color: #194d26;
+  margin: 8px 0 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ede9e1;
+  letter-spacing: -0.01em;
+}
+
+.auth-section-title:first-of-type {
+  margin-top: 0;
+}
+
+/* Submit button */
+.auth-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px 24px;
+  min-height: 50px;
+  border: 1.5px solid #194d26;
+  border-radius: 12px;
+  background: #194d26;
+  color: #ffffff;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #143e1f;
+  border-color: #143e1f;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px -8px rgba(25, 77, 38, 0.4);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.auth-foot {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #ede9e1;
+  text-align: center;
+}
+
+.auth-foot p {
+  font-size: 13.5px;
+  color: #57534e;
+  margin: 0 0 8px;
+}
+
+.auth-foot p:last-child {
+  margin-bottom: 0;
+}
+
+.auth-foot-link {
+  color: #194d26;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.auth-foot-link:hover {
+  color: #143e1f;
+  text-decoration: underline;
+}
+
+/* ============================================================
+   ASIDE PANEL
+   ============================================================ */
+
+.auth-panel-aside {
+  border-radius: 22px;
+  background: #eef4e8;                     /* same as About visual card */
+  border: 1px solid #dfe8dc;
+  color: #1c1917;
+  padding: 48px 40px;
+  display: flex;
+  align-items: center;
+  box-shadow:
+    0 20px 40px -20px rgba(25, 77, 38, 0.15),
+    0 4px 12px -6px rgba(28, 25, 23, 0.06);
+}
+
+.auth-aside-inner {
+  width: 100%;
+}
+
+/* Dark green icon tile with white icon */
+.auth-aside-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #194d26;
+  color: #ffffff;
+  margin-bottom: 22px;
+  box-shadow: 0 6px 14px -6px rgba(25, 77, 38, 0.35);
+}
+
+/* Title — dark green, on cream */
+.auth-aside-title {
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 800;
+  color: #194d26;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin: 0 0 16px;
+}
+
+/* Body text — warm grey */
+.auth-aside-text {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #57534e;
+  margin: 0 0 24px;
+  max-width: 360px;
+}
+
+/* Feature list — dark text, green checks */
+.auth-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #44403c;
+  line-height: 1.4;
+}
+
+.auth-feature-list li svg {
+  flex-shrink: 0;
+  color: #194d26;
+  background: rgba(25, 77, 38, 0.1);
+  border-radius: 6px;
+  padding: 3px;
+  width: 22px;
+  height: 22px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .auth-shell,
+  .auth-shell-wide {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+    gap: 24px;
+  }
+
+  .auth-panel-form,
+  .auth-panel-form-wide {
+    padding: 40px 32px;
+    border-radius: 20px;
+  }
+
+  .auth-panel-aside {
+  padding: 32px 22px;
+}
+
+.auth-aside-title {
+  font-size: 22px;
+}
+
+.auth-aside-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+}
+
+@media (max-width: 640px) {
+  .auth-shell,
+  .auth-shell-wide {
+    margin: 32px auto;
+    padding: 0 16px;
+  }
+
+  .auth-panel-form,
+  .auth-panel-form-wide {
+    padding: 32px 22px;
+  }
+
+  .auth-panel-aside {
+    padding: 32px 22px;
+  }
+
+  .auth-heading {
+    font-size: 24px;
+  }
+
+  .auth-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .auth-aside-title {
+    font-size: 22px;
+  }
+}
