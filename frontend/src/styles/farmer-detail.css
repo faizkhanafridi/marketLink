@@ -849,3 +849,212 @@
   font-weight: 600;
   text-decoration: underline;
 }
+
+
+/* ============================================
+   Farmer hero actions & favorite button
+   ============================================ */
+.farmer-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 14px 0 12px;
+}
+
+.farmer-fav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.farmer-fav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.farmer-fav-btn.active {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #ffffff;
+}
+
+.farmer-fav-btn.active:hover:not(:disabled) {
+  background: #a93226;
+  border-color: #a93226;
+}
+
+.farmer-fav-btn i {
+  font-size: 15px;
+}
+
+.farmer-fav-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Farmer review form
+   ============================================ */
+.farmer-review-form {
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 28px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.farmer-review-form-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  margin-bottom: 20px;
+  color: var(--color-primary-dark);
+}
+
+.farmer-review-form-rating {
+  margin-bottom: 20px;
+}
+
+.farmer-review-form-rating label,
+.farmer-review-form-comment label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.farmer-review-form-comment {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.farmer-review-char-count {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: var(--color-text-lighter);
+  margin-top: 6px;
+}
+
+.farmer-review-login-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #fff8e6;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #856404;
+}
+
+.farmer-review-login-hint i {
+  color: var(--color-warning);
+}
+
+.farmer-review-login-hint a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}/* ============================================
+   Farmer name row + Save Farmer button
+   ============================================ */
+.farmer-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.farmer-name-row h1 {
+  margin: 0;
+  flex: 1;
+  min-width: 220px;
+}
+
+.farmer-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: #ffffff;
+  color: var(--color-primary-dark);
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.farmer-save-btn:hover:not(:disabled) {
+  background: var(--color-cream);
+  border-color: var(--color-cream);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.farmer-save-btn i {
+  font-size: 16px;
+  color: #c0392b;
+  transition: transform 0.2s ease;
+}
+
+.farmer-save-btn:hover:not(:disabled) i {
+  transform: scale(1.15);
+}
+
+/* Saved state — filled solid */
+.farmer-save-btn.saved {
+  background: #c0392b;
+  color: #ffffff;
+  border-color: #c0392b;
+  box-shadow: 0 2px 8px rgba(192, 57, 43, 0.3);
+}
+
+.farmer-save-btn.saved i {
+  color: #ffffff;
+}
+
+.farmer-save-btn.saved:hover:not(:disabled) {
+  background: #a93226;
+  border-color: #a93226;
+  box-shadow: 0 6px 16px rgba(192, 57, 43, 0.4);
+}
+
+.farmer-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mobile stacking */
+@media (max-width: 720px) {
+  .farmer-name-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .farmer-save-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

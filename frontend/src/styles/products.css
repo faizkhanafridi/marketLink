@@ -673,16 +673,13 @@
     align-self: flex-start;
   }
 }
-
-
-
 /* ============================================================
-   HORIZONTAL FILTER BAR
+   HORIZONTAL FILTER BAR — responsive
    ============================================================ */
 
 .products-filter-bar {
   position: sticky;
-  top: 72px;                    /* adjust to your navbar height */
+  top: var(--products-navbar-offset, 84px);
   z-index: 30;
   margin-bottom: 32px;
   padding: 14px 16px;
@@ -696,14 +693,21 @@
   -webkit-backdrop-filter: blur(10px);
 }
 
+/* ---------- Desktop: 4 columns ----------
+   Search | Category | Price Range | Clear
+   -------------------------------------------------- */
 .filter-bar-inner {
   display: grid;
-  grid-template-columns: minmax(220px, 1.6fr) minmax(160px, 1fr) minmax(110px, 0.7fr) minmax(110px, 0.7fr) auto;
+  grid-template-columns:
+    minmax(240px, 1.6fr)
+    minmax(170px, 1fr)
+    minmax(220px, 1.2fr)
+    auto;
   align-items: end;
   gap: 12px;
 }
 
-/* --- Individual field --- */
+/* ---------- Individual field ---------- */
 .filter-field {
   display: flex;
   flex-direction: column;
@@ -720,7 +724,7 @@
   padding-left: 2px;
 }
 
-/* --- Search box --- */
+/* ---------- Search box ---------- */
 .products-search-box {
   display: flex;
   align-items: center;
@@ -780,7 +784,7 @@
   font-size: 9px;
 }
 
-/* --- Select + inputs --- */
+/* ---------- Select + inputs ---------- */
 .products-select-wrap {
   position: relative;
 }
@@ -825,18 +829,45 @@
   font-size: 10px;
 }
 
-/* Hide number spinners for a cleaner look */
-.filter-field-price input[type="number"]::-webkit-outer-spin-button,
-.filter-field-price input[type="number"]::-webkit-inner-spin-button {
+/* ---------- Price Range (Min + Max together) ---------- */
+.filter-field-price-range {
+  min-width: 0;
+}
+
+.price-range-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.price-range-row .products-form-control {
+  min-height: 44px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.price-range-dash {
+  color: #a8a29e;
+  font-size: 13px;
+  font-weight: 600;
+  user-select: none;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Hide number spinners */
+.filter-field-price-range input[type="number"]::-webkit-outer-spin-button,
+.filter-field-price-range input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.filter-field-price input[type="number"] {
+.filter-field-price-range input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-/* --- Clear button --- */
+/* ---------- Clear button ---------- */
 .filter-field-action {
   justify-content: flex-end;
 }
@@ -845,6 +876,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: 44px;
   padding: 0 18px;
@@ -882,4 +914,149 @@
   border-radius: 50%;
   background: #c47a0a;
   box-shadow: 0 0 0 3px rgba(196, 122, 10, 0.15);
+}
+
+/* ============================================================
+   FILTER BAR — RESPONSIVE
+   ============================================================ */
+
+/* ---------- Tablet (≤ 1024px) ----------
+   Search full width | Category + Price Range side by side | Clear full width
+   -------------------------------------------------- */
+@media (max-width: 1024px) {
+  .filter-bar-inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filter-field-search {
+    grid-column: 1 / -1;
+  }
+
+  .filter-field-action {
+    grid-column: 1 / -1;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Small tablet / large phone (≤ 720px) ---------- */
+@media (max-width: 720px) {
+  .products-filter-bar {
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    position: static;
+  }
+
+  .filter-bar-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+
+  .filter-field-search,
+  .filter-field-action {
+    grid-column: 1 / -1;
+  }
+
+  .filter-inline-label {
+    font-size: 9.5px;
+  }
+
+  .products-search-box,
+  .products-form-control,
+  .clear-filters-btn {
+    min-height: 42px;
+    font-size: 13px;
+  }
+}
+
+/* ---------- Phone (≤ 520px) ----------
+   Min + Max still share a row, everything else stacks
+   -------------------------------------------------- */
+@media (max-width: 520px) {
+  .products-filter-bar {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .filter-bar-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Reset all column spans — stack everything */
+  .filter-field-search,
+  .filter-field-category,
+  .filter-field-price-range,
+  .filter-field-action {
+    grid-column: auto;
+  }
+
+  .filter-inline-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Price range stays a row even on phone */
+  .price-range-row {
+    gap: 6px;
+  }
+
+  .price-range-row .products-form-control {
+    min-height: 44px;
+    font-size: 14px;
+    padding: 0 8px;
+  }
+
+  .price-range-dash {
+    font-size: 12px;
+  }
+
+  .products-search-box,
+  .products-form-control,
+  .clear-filters-btn {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Very small phone (≤ 360px) ---------- */
+@media (max-width: 360px) {
+  .products-filter-bar {
+    padding: 10px;
+  }
+
+  .filter-bar-inner {
+    gap: 8px;
+  }
+
+  .filter-field {
+    gap: 4px;
+  }
+
+  .filter-inline-label {
+    font-size: 9px;
+  }
+
+  .price-range-row {
+    gap: 5px;
+  }
+
+  .price-range-row .products-form-control {
+    padding: 0 6px;
+    font-size: 13px;
+  }
+
+  .price-range-dash {
+    font-size: 11px;
+  }
 }

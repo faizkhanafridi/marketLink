@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   MapPin,
   Phone,
@@ -37,7 +38,6 @@ const ContactPage = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    // Simulate sending message
     setTimeout(() => {
       toast.success('Message sent successfully. We will get back to you soon.');
       setFormData({ name: '', email: '', subject: '', message: '' });
@@ -70,6 +70,67 @@ const ContactPage = () => {
     },
   ];
 
+  // ==================== ANIMATION VARIANTS ====================
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        delay: i * 0.1,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    }),
+  };
+
+  const stagger = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+    },
+  };
+
+  const slideLeft = {
+    hidden: { opacity: 0, x: -40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const slideRight = {
+    hidden: { opacity: 0, x: 40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const itemSlide = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        delay: i * 0.1,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    }),
+  };
+
+  const floatingDecoration = {
+    animate: {
+      y: [0, -20, 0],
+      x: [0, 10, 0],
+      transition: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
+    },
+  };
+
   return (
     <div className="contact-page">
       <Navbar />
@@ -78,101 +139,222 @@ const ContactPage = () => {
           PAGE HERO
       ========================================================= */}
       <center>
+        <section className="contact-hero">
+          <motion.div
+            className="contact-hero-decoration contact-hero-decoration-one"
+            variants={floatingDecoration}
+            animate="animate"
+          />
+          <motion.div
+            className="contact-hero-decoration contact-hero-decoration-two"
+            variants={floatingDecoration}
+            animate="animate"
+            transition={{ duration: 7, delay: 1 }}
+          />
 
-    
-      <section className="contact-hero">
-        <div className="contact-hero-decoration contact-hero-decoration-one"></div>
-        <div className="contact-hero-decoration contact-hero-decoration-two"></div>
+          <div className="container">
+            <motion.div
+              className="contact-hero-content"
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+            >
+              <motion.span variants={fadeUp} className="contact-page-tag">
+                <motion.span
+                  animate={{ rotate: [0, 20, -20, 0] }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatDelay: 2,
+                  }}
+                  style={{ display: 'inline-flex' }}
+                >
+                  <Sparkles size={13} />
+                </motion.span>
+                Get in Touch
+              </motion.span>
 
-        <div className="container">
-          <div className="contact-hero-content">
-            <span className="contact-page-tag">
-              <Sparkles size={13} />
-              Get in Touch
-            </span>
+              <motion.h1 variants={fadeUp} className="contact-page-title">
+                Let's start a
+                <motion.span
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.7 }}
+                >
+                  {" "}conversation
+                </motion.span>
+              </motion.h1>
 
-            <h1 className="contact-page-title">
-              Let's start a
-              <span> conversation</span>
-            </h1>
-
-            <p className="contact-page-subtitle">
-              Questions, feedback, partnership ideas — we'd love to hear
-              from you. Our team usually replies within one business day.
-            </p>
+              <motion.p variants={fadeUp} className="contact-page-subtitle">
+                Questions, feedback, partnership ideas — we'd love to hear
+                from you. Our team usually replies within one business day.
+              </motion.p>
+            </motion.div>
           </div>
-        </div>
-      </section>
-  </center>
+        </section>
+      </center>
+
       {/* =========================================================
           CONTACT GRID
       ========================================================= */}
       <section className="contact-content-section">
         <div className="container">
           <div className="contact-grid">
-
             {/* ---------- LEFT: Info ---------- */}
-            <aside className="contact-info">
-              <span className="contact-eyebrow">Contact Information</span>
-              <h2 className="contact-info-title">
-                Other ways to reach us
-              </h2>
-              <p className="contact-info-text">
-                Prefer a call or a visit? Here's how to find us outside of
-                the form.
-              </p>
+            <motion.aside
+              className="contact-info"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={slideLeft}
+            >
+              <motion.span
+                className="contact-eyebrow"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                Contact Information
+              </motion.span>
 
-              <div className="contact-info-list">
+              <motion.h2
+                className="contact-info-title"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+              >
+                Other ways to reach us
+              </motion.h2>
+
+              <motion.p
+                className="contact-info-text"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Prefer a call or a visit? Here's how to find us outside of the
+                form.
+              </motion.p>
+
+              <motion.div
+                className="contact-info-list"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={stagger}
+              >
                 {contactItems.map((item, idx) => {
                   const Icon = item.icon;
-                  const Wrapper = item.href ? 'a' : 'div';
+                  const Wrapper = item.href ? motion.a : motion.div;
                   return (
                     <Wrapper
                       key={idx}
                       href={item.href}
                       className="contact-info-item"
+                      variants={itemSlide}
+                      custom={idx}
+                      whileHover={{
+                        x: 6,
+                        transition: { duration: 0.25 },
+                      }}
                     >
-                      <div className="contact-info-icon">
+                      <motion.div
+                        className="contact-info-icon"
+                        whileHover={{ rotate: -10, scale: 1.12 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 15,
+                        }}
+                      >
                         <Icon size={18} strokeWidth={1.8} />
-                      </div>
+                      </motion.div>
                       <div className="contact-info-body">
-                        <span className="contact-info-label">{item.label}</span>
-                        <span className="contact-info-value">{item.value}</span>
+                        <span className="contact-info-label">
+                          {item.label}
+                        </span>
+                        <span className="contact-info-value">
+                          {item.value}
+                        </span>
                       </div>
                     </Wrapper>
                   );
                 })}
-              </div>
+              </motion.div>
 
               {/* Response promise card */}
-              <div className="contact-promise">
-                <div className="contact-promise-icon">
+              <motion.div
+                className="contact-promise"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                whileHover={{ y: -3, scale: 1.02 }}
+              >
+                <motion.div
+                  className="contact-promise-icon"
+                  animate={{
+                    scale: [1, 1.15, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
                   <CheckCircle2 size={18} />
-                </div>
+                </motion.div>
                 <div>
                   <strong>Quick response</strong>
                   <span>Most messages answered within 24 hours.</span>
                 </div>
-              </div>
-            </aside>
+              </motion.div>
+            </motion.aside>
 
             {/* ---------- RIGHT: Form ---------- */}
-            <div className="contact-form-wrapper">
-              <div className="contact-form-header">
-                <span className="contact-eyebrow">Send a Message</span>
-                <h2 className="contact-form-title">
+            <motion.div
+              className="contact-form-wrapper"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={slideRight}
+            >
+              <motion.div
+                className="contact-form-header"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={stagger}
+              >
+                <motion.span variants={fadeUp} className="contact-eyebrow">
+                  Send a Message
+                </motion.span>
+                <motion.h2 variants={fadeUp} className="contact-form-title">
                   Tell us what's on your mind
-                </h2>
-              </div>
+                </motion.h2>
+              </motion.div>
 
-              <form onSubmit={handleSubmit} className="contact-form">
-                <div className="contact-form-row">
-                  <div className="contact-form-group">
+              <motion.form
+                onSubmit={handleSubmit}
+                className="contact-form"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={stagger}
+              >
+                <motion.div className="contact-form-row" variants={fadeUp}>
+                  <motion.div
+                    className="contact-form-group"
+                    variants={fadeUp}
+                  >
                     <label className="contact-form-label">
                       <User size={13} />
                       Full Name
                     </label>
-                    <input
+                    <motion.input
                       type="text"
                       name="name"
                       className="contact-input"
@@ -180,15 +362,22 @@ const ContactPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      whileFocus={{
+                        scale: 1.01,
+                        transition: { duration: 0.2 },
+                      }}
                     />
-                  </div>
+                  </motion.div>
 
-                  <div className="contact-form-group">
+                  <motion.div
+                    className="contact-form-group"
+                    variants={fadeUp}
+                  >
                     <label className="contact-form-label">
                       <AtSign size={13} />
                       Email Address
                     </label>
-                    <input
+                    <motion.input
                       type="email"
                       name="email"
                       className="contact-input"
@@ -196,16 +385,20 @@ const ContactPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      whileFocus={{
+                        scale: 1.01,
+                        transition: { duration: 0.2 },
+                      }}
                     />
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
-                <div className="contact-form-group">
+                <motion.div className="contact-form-group" variants={fadeUp}>
                   <label className="contact-form-label">
                     <Tag size={13} />
                     Subject
                   </label>
-                  <input
+                  <motion.input
                     type="text"
                     name="subject"
                     className="contact-input"
@@ -213,15 +406,19 @@ const ContactPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
+                    whileFocus={{
+                      scale: 1.01,
+                      transition: { duration: 0.2 },
+                    }}
                   />
-                </div>
+                </motion.div>
 
-                <div className="contact-form-group">
+                <motion.div className="contact-form-group" variants={fadeUp}>
                   <label className="contact-form-label">
                     <MessageCircle size={13} />
                     Message
                   </label>
-                  <textarea
+                  <motion.textarea
                     name="message"
                     className="contact-input contact-textarea"
                     rows="6"
@@ -229,52 +426,108 @@ const ContactPage = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    whileFocus={{
+                      scale: 1.01,
+                      transition: { duration: 0.2 },
+                    }}
                   />
-                </div>
+                </motion.div>
 
-                <button
+                <motion.button
                   type="submit"
                   className="contact-submit"
                   disabled={submitting}
+                  variants={fadeUp}
+                  whileHover={!submitting ? { scale: 1.04, y: -3 } : {}}
+                  whileTap={!submitting ? { scale: 0.97 } : {}}
+                  transition={{ duration: 0.2 }}
                 >
-                  <Send size={15} />
+                  {submitting ? (
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                      style={{ display: 'inline-flex' }}
+                    >
+                      <Send size={15} />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      whileHover={{ x: 3, rotate: 15 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ display: 'inline-flex' }}
+                    >
+                      <Send size={15} />
+                    </motion.span>
+                  )}
                   {submitting ? 'Sending...' : 'Send Message'}
-                </button>
-              </form>
-            </div>
-
+                </motion.button>
+              </motion.form>
+            </motion.div>
           </div>
 
           {/* =========================================================
               MAP
           ========================================================= */}
-          <div className="contact-map">
+          <motion.div
+            className="contact-map"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="contact-map-header">
-              <div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
                 <span className="contact-eyebrow">Find Us</span>
                 <h3 className="contact-map-title">Our location on the map</h3>
-              </div>
-              <a
+              </motion.div>
+
+              <motion.a
                 href="https://www.google.com/maps/search/?api=1&query=40.7128,-74.006"
                 target="_blank"
                 rel="noreferrer"
                 className="contact-map-link"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ scale: 1.05, x: 3 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <MapPin size={14} />
+                <motion.span
+                  whileHover={{ rotate: -10 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ display: 'inline-flex' }}
+                >
+                  <MapPin size={14} />
+                </motion.span>
                 Open in Google Maps
-              </a>
+              </motion.a>
             </div>
 
-            <div className="contact-map-frame">
+            <motion.div
+              className="contact-map-frame"
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
               <MapView
                 latitude={40.7128}
                 longitude={-74.006}
                 height="440px"
                 zoom={14}
               />
-            </div>
-          </div>
-
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 

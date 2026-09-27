@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { productApi } from '../../api';
-import { toast } from 'react-toastify';
-import '../../styles/forms.css';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Upload,
+  X,
+  Image as ImageIcon,
+  Package,
+  Tag,
+  Ruler,
+  Layers,
+  FileText,
+  Check,
+  AlertCircle,
+} from 'lucide-react';
 
-const ProductForm = ({ product, categories, onSubmit, onCancel }) => {
+const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
-    unit: 'kg',
+    unit: '',
     stock_quantity: '',
     category_id: '',
-    image: '',
     is_available: true,
   });
 
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
-  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -25,224 +36,376 @@ const ProductForm = ({ product, categories, onSubmit, onCancel }) => {
         name: product.name || '',
         description: product.description || '',
         price: product.price || '',
-        unit: product.unit || 'kg',
+        unit: product.unit || '',
         stock_quantity: product.stock_quantity || '',
-        category_id: product.category?.category_id || product.category_id || '',
-        image: product.image || '',
-        is_available: product.is_available ?? true,
+        category_id: product.category_id || product.category?.category_id || '',
+        is_available: product.is_available !== false,
       });
-      setImagePreview(product.image || '');
+      setImagePreview(product.image || null);
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        price: '',
+        unit: '',
+        stock_quantity: '',
+        category_id: '',
+        is_available: true,
+      });
+      setImageFile(null);
+      setImagePreview(null);
     }
   }, [product]);
 
   const handleChange = (e) => {
-    const value =
-      e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setFormData({ ...formData, [e.target.name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+  const handleFile = (file) => {
     if (!file) return;
-
-    // Validate size (4MB) and type
-    if (file.size > 4 * 1024 * 1024) {
-      toast.error('Image must be under 4 MB');
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
       return;
     }
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      toast.error('Only JPG, PNG, or WEBP allowed');
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be under 5 MB');
       return;
     }
-
     setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    handleFile(file);
   };
 
   const handleRemoveImage = () => {
     setImageFile(null);
-    setImagePreview('');
-    setFormData((prev) => ({ ...prev, image: '' }));
-  };
-
-  const uploadImageIfNeeded = async () => {
-    if (!imageFile) return formData.image; // keep existing URL
-
-    setUploading(true);
-    try {
-      const res = await productApi.uploadImage(imageFile);
-      return res.path; // e.g. /storage/products/uuid.jpg
-    } finally {
-      setUploading(false);
-    }
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+
+    const payload = new FormData();
+    payload.append('name', formData.name);
+    payload.append('description', formData.description || '');
+    payload.append('price', formData.price);
+    payload.append('unit', formData.unit || '');
+    payload.append('stock_quantity', formData.stock_quantity || 0);
+    if (formData.category_id) payload.append('category_id', formData.category_id);
+    payload.append('is_available', formData.is_available ? 1 : 0);
+    if (imageFile) payload.append('image', imageFile);
 
     try {
-      const imagePath = await uploadImageIfNeeded();
-
-      onSubmit({
-        ...formData,
-        image: imagePath,
-        price: parseFloat(formData.price),
-        stock_quantity: parseInt(formData.stock_quantity, 10),
-        category_id: parseInt(formData.category_id, 10),
-      });
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || 'Image upload failed. Please try again.'
-      );
+      await onSubmit(payload);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const units = ['kg', 'g', 'lb', 'oz', 'piece', 'dozen', 'bunch', 'liter', 'ml'];
-
   return (
-    <form onSubmit={handleSubmit} className="product-form">
-      <div className="form-row">
-        <div className="form-group">
-          <label className="form-label">Product Name *</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Category *</label>
-          <select
-            name="category_id"
-            className="form-control"
-            value={formData.category_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat.category_id} value={cat.category_id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+    <form onSubmit={handleSubmit} className="pf-form">
+      <div className="pf-layout">
 
-      <div className="form-group">
-        <label className="form-label">Description</label>
-        <textarea
-          name="description"
-          className="form-control"
-          rows="3"
-          value={formData.description}
-          onChange={handleChange}
-        ></textarea>
-      </div>
+        {/* ==================== LEFT: FIELDS ==================== */}
+        <div className="pf-fields">
 
-      <div className="form-row">
-        <div className="form-group">
-          <label className="form-label">Price *</label>
-          <input
-            type="number"
-            name="price"
-            className="form-control"
-            step="0.01"
-            min="0"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Unit *</label>
-          <select
-            name="unit"
-            className="form-control"
-            value={formData.unit}
-            onChange={handleChange}
-            required
-          >
-            {units.map((u) => (
-              <option key={u} value={u}>
-                {u}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label className="form-label">Stock Quantity *</label>
-          <input
-            type="number"
-            name="stock_quantity"
-            className="form-control"
-            min="0"
-            value={formData.stock_quantity}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      </div>
-
-      {/* ===== Image Upload ===== */}
-      <div className="form-group">
-        <label className="form-label">Product Image</label>
-
-        <div className="image-upload-wrapper">
-          {imagePreview ? (
-            <div className="image-preview-box">
-              <img src={imagePreview} alt="Preview" />
-              <button
-                type="button"
-                className="image-remove-btn"
-                onClick={handleRemoveImage}
-                title="Remove image"
-              >
-                <i className="fas fa-times"></i>
-              </button>
+          {/* Basic info */}
+          <section className="pf-section">
+            <div className="pf-section-head">
+              <span className="pf-section-icon">
+                <Package size={14} />
+              </span>
+              <div>
+                <h4 className="pf-section-title">Basic Information</h4>
+                <p className="pf-section-sub">
+                  Name and short description of your product
+                </p>
+              </div>
             </div>
-          ) : (
-            <label className="image-dropzone">
+
+            <div className="pf-group">
+              <label className="pf-label" htmlFor="pf-name">
+                Product Name <span className="pf-req">*</span>
+              </label>
               <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleFileChange}
-                hidden
+                id="pf-name"
+                type="text"
+                name="name"
+                className="pf-input"
+                placeholder="e.g. Heirloom Tomatoes"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                maxLength={120}
               />
-              <i className="fas fa-cloud-upload-alt"></i>
-              <span>Click to upload image</span>
-              <small>JPG, PNG, or WEBP — max 4 MB</small>
+            </div>
+
+            <div className="pf-group">
+              <label className="pf-label" htmlFor="pf-description">
+                <FileText size={12} />
+                Description
+              </label>
+              <textarea
+                id="pf-description"
+                name="description"
+                className="pf-input pf-textarea"
+                placeholder="Describe your product — freshness, size, how it was grown…"
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                maxLength={500}
+              />
+              <span className="pf-char-count">
+                {formData.description.length} / 500
+              </span>
+            </div>
+          </section>
+
+          {/* Pricing & stock */}
+          <section className="pf-section">
+            <div className="pf-section-head">
+              <span className="pf-section-icon">
+                <Tag size={14} />
+              </span>
+              <div>
+                <h4 className="pf-section-title">Pricing & Stock</h4>
+                <p className="pf-section-sub">
+                  Set your price and how many units you have
+                </p>
+              </div>
+            </div>
+
+            <div className="pf-row">
+              <div className="pf-group">
+                <label className="pf-label" htmlFor="pf-price">
+                  Price <span className="pf-req">*</span>
+                </label>
+                <div className="pf-input-wrap">
+                  <span className="pf-input-prefix">$</span>
+                  <input
+                    id="pf-price"
+                    type="number"
+                    name="price"
+                    className="pf-input pf-input-prefixed"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="pf-group">
+                <label className="pf-label" htmlFor="pf-unit">
+                  <Ruler size={12} />
+                  Unit
+                </label>
+                <input
+                  id="pf-unit"
+                  type="text"
+                  name="unit"
+                  className="pf-input"
+                  placeholder="kg, lb, dozen, jar…"
+                  value={formData.unit}
+                  onChange={handleChange}
+                  maxLength={20}
+                />
+              </div>
+            </div>
+
+            <div className="pf-row">
+              <div className="pf-group">
+                <label className="pf-label" htmlFor="pf-stock">
+                  <Layers size={12} />
+                  Stock Quantity
+                </label>
+                <input
+                  id="pf-stock"
+                  type="number"
+                  name="stock_quantity"
+                  className="pf-input"
+                  placeholder="0"
+                  min="0"
+                  value={formData.stock_quantity}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="pf-group">
+                <label className="pf-label" htmlFor="pf-category">
+                  Category
+                </label>
+                <select
+                  id="pf-category"
+                  name="category_id"
+                  className="pf-input pf-select"
+                  value={formData.category_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select category…</option>
+                  {categories.map((cat) => (
+                    <option key={cat.category_id} value={cat.category_id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </section>
+
+          {/* Availability */}
+          <section className="pf-section">
+            <label className="pf-toggle">
+              <input
+                type="checkbox"
+                name="is_available"
+                checked={formData.is_available}
+                onChange={handleChange}
+              />
+              <span className="pf-toggle-track">
+                <span className="pf-toggle-thumb" />
+              </span>
+              <span className="pf-toggle-text">
+                <strong>Available for purchase</strong>
+                <span>Uncheck to hide this product from customers</span>
+              </span>
             </label>
-          )}
+          </section>
+
         </div>
-      </div>
 
-      <div className="form-group checkbox-group">
-        <label className="checkbox-label">
+        {/* ==================== RIGHT: IMAGE ==================== */}
+        <aside className="pf-image-col">
+          <div className="pf-image-head">
+            <span className="pf-section-icon">
+              <ImageIcon size={14} />
+            </span>
+            <div>
+              <h4 className="pf-section-title">Product Image</h4>
+              <p className="pf-section-sub">Recommended 800×600 px, max 5 MB</p>
+            </div>
+          </div>
+
+          <div
+            className={`pf-drop ${dragging ? 'is-dragging' : ''} ${
+              imagePreview ? 'has-image' : ''
+            }`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+          >
+            {imagePreview ? (
+              <>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="pf-drop-img"
+                  onError={(e) => {
+                    e.target.src = '/assets/images/default-product.jpg';
+                  }}
+                />
+                <button
+                  type="button"
+                  className="pf-drop-remove"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveImage();
+                  }}
+                  title="Remove image"
+                  aria-label="Remove image"
+                >
+                  <X size={14} />
+                </button>
+                <div className="pf-drop-overlay">
+                  <Upload size={16} />
+                  <span>Click to replace</span>
+                </div>
+              </>
+            ) : (
+              <div className="pf-drop-empty">
+                <span className="pf-drop-icon">
+                  <Upload size={20} />
+                </span>
+                <strong>Drop an image here</strong>
+                <span>or click to browse</span>
+                <span className="pf-drop-hint">PNG, JPG up to 5 MB</span>
+              </div>
+            )}
+          </div>
+
           <input
-            type="checkbox"
-            name="is_available"
-            checked={formData.is_available}
-            onChange={handleChange}
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="pf-hidden-input"
+            onChange={(e) => handleFile(e.target.files?.[0])}
           />
-          <span>Product is available for ordering</span>
-        </label>
+
+          {imagePreview && (
+            <div className="pf-image-meta">
+              <Check size={13} />
+              <span>Preview ready</span>
+            </div>
+          )}
+        </aside>
+
       </div>
 
-      <div className="form-actions">
-        <button type="button" className="btn btn-outline" onClick={onCancel}>
-          Cancel
-        </button>
-        <button type="submit" className="btn btn-primary" disabled={uploading}>
-          {uploading
-            ? 'Uploading image...'
-            : product
-            ? 'Update Product'
-            : 'Create Product'}
-        </button>
+      {/* ==================== ACTIONS ==================== */}
+      <div className="pf-actions">
+        <div className="pf-actions-note">
+          <AlertCircle size={13} />
+          <span>Fields marked with <strong>*</strong> are required</span>
+        </div>
+
+        <div className="pf-actions-buttons">
+          <button
+            type="button"
+            className="pf-btn pf-btn-ghost"
+            onClick={onCancel}
+            disabled={submitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="pf-btn pf-btn-primary"
+            disabled={submitting}
+          >
+            {submitting ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Saving…
+              </>
+            ) : (
+              <>
+                <Check size={15} />
+                {product ? 'Update Product' : 'Create Product'}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import CustomerSidebar from '../../components/customer/CustomerSidebar';
@@ -12,7 +12,10 @@ import '../../styles/dashboard.css';
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  //  URL se status uthao, warna 'all'
+  const filter = searchParams.get('status') || 'all';
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -28,9 +31,18 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const filteredOrders = filter === 'all'
-    ? orders
-    : orders.filter((o) => o.order_status === filter);
+  const handleFilterChange = (key) => {
+    if (key === 'all') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ status: key });
+    }
+  };
+
+  const filteredOrders =
+    filter === 'all'
+      ? orders
+      : orders.filter((o) => o.order_status === filter);
 
   const statusTabs = [
     { key: 'all', label: 'All' },
@@ -57,7 +69,7 @@ const MyOrdersPage = () => {
               <button
                 key={tab.key}
                 className={`filter-tab ${filter === tab.key ? 'active' : ''}`}
-                onClick={() => setFilter(tab.key)}
+                onClick={() => handleFilterChange(tab.key)}
               >
                 {tab.label}
               </button>
@@ -72,7 +84,7 @@ const MyOrdersPage = () => {
               title="No Orders Found"
               message="You haven't placed any orders yet."
               actionText="Browse Products"
-              onAction={() => window.location.href = '/products'}
+              onAction={() => (window.location.href = '/products')}
             />
           ) : (
             <div className="orders-list">
@@ -81,9 +93,13 @@ const MyOrdersPage = () => {
                   <div className="order-header">
                     <div>
                       <span className="order-id">Order #{order.order_id}</span>
-                      <span className="order-date">{formatDate(order.created_at)}</span>
+                      <span className="order-date">
+                        {formatDate(order.created_at)}
+                      </span>
                     </div>
-                    <span className={`status-badge status-${order.order_status}`}>
+                    <span
+                      className={`status-badge status-${order.order_status}`}
+                    >
                       {order.order_status?.replace(/_/g, ' ')}
                     </span>
                   </div>
@@ -100,7 +116,9 @@ const MyOrdersPage = () => {
                         </span>
                       ))}
                       {order.items?.length > 3 && (
-                        <span className="more-items">+{order.items.length - 3} more</span>
+                        <span className="more-items">
+                          +{order.items.length - 3} more
+                        </span>
                       )}
                     </div>
                     <div className="order-total">
@@ -111,9 +129,13 @@ const MyOrdersPage = () => {
 
                   <div className="order-footer">
                     <div className="order-pickup">
-                      <i className="fas fa-calendar"></i> {order.pickup_date} | {order.pickup_slot}
+                      <i className="fas fa-calendar"></i> {order.pickup_date} |{' '}
+                      {order.pickup_slot}
                     </div>
-                    <Link to={`/customer/orders/${order.order_id}`} className="btn btn-sm btn-outline">
+                    <Link
+                      to={`/customer/orders/${order.order_id}`}
+                      className="btn btn-sm btn-outline"
+                    >
                       View Details
                     </Link>
                   </div>
@@ -123,7 +145,6 @@ const MyOrdersPage = () => {
           )}
         </main>
       </div>
-      
     </div>
   );
 };

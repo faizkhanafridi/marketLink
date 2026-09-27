@@ -25,4 +25,7 @@ export const farmerApi = {
     const response = await axiosInstance.get(`/farmers/${id}/reviews`);
     return response.data;
   },
+
+    getAnalytics: (params) => axiosInstance.get('/farmer/analytics', { params }),
+
 };

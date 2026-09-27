@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   MapPin,
@@ -12,7 +12,6 @@ import {
   Store,
   Tractor,
   Leaf,
-  Star,
   Users,
   Package,
   TrendingUp,
@@ -32,10 +31,10 @@ import {
   iconHoney3D,
 } from '../../assets/images';
 import '../../styles/home.css';
-import { AuthContext } from '../../context/AuthContext'; 
+import { AuthContext } from '../../context/AuthContext';
 
 const HomePage = () => {
-  const { isAuthenticated } = useContext(AuthContext);       
+  const { isAuthenticated } = useContext(AuthContext);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [featuredFarmers, setFeaturedFarmers] = useState([]);
   const [markets, setMarkets] = useState([]);
@@ -67,22 +66,80 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  // Framer Motion animation variants
+  // ==================== ANIMATION VARIANTS ====================
+
+  // Smooth fade-up with custom delay
   const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: { opacity: 0, y: 30 },
     visible: (i = 0) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.55, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] },
+      transition: {
+        duration: 0.7,
+        delay: i * 0.1,
+        ease: [0.16, 1, 0.3, 1],
+      },
     }),
   };
 
+  // Stagger container
   const stagger = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+      transition: { staggerChildren: 0.1, delayChildren: 0.15 },
     },
+  };
+
+  // Slide from left
+  const slideLeft = {
+    hidden: { opacity: 0, x: -40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  // Slide from right
+  const slideRight = {
+    hidden: { opacity: 0, x: 40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  // Scale + fade (for hero visual card)
+  const scaleIn = {
+    hidden: { opacity: 0, scale: 0.92 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  // Card pop-in (for step cards, highlights)
+  const cardPop = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        delay: i * 0.12,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    }),
+  };
+
+  // Hover effect for cards
+  const hoverLift = {
+    y: -8,
+    transition: { duration: 0.3, ease: 'easeOut' },
   };
 
   const quickHighlights = [
@@ -142,14 +199,22 @@ const HomePage = () => {
 
       {/* ==================== HERO SECTION ==================== */}
       <section className="hero-section">
-        {/* Full-bleed background image */}
+        {/* Full-bleed background image with subtle zoom */}
         <div className="hero-bg">
-          <img
+          <motion.img
             src={heroMarket3DImg}
             alt="MarketLink farmers market"
             className="hero-bg-img"
+            initial={{ scale: 1.15, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
           />
-          <div className="hero-bg-overlay" />
+          <motion.div
+            className="hero-bg-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.3 }}
+          />
         </div>
 
         <div className="hero-container">
@@ -161,18 +226,31 @@ const HomePage = () => {
               variants={stagger}
               className="hero-left"
             >
-              <motion.span variants={fadeUp} className="hero-badge">
-                <Leaf size={14} />
+              <motion.span variants={slideLeft} className="hero-badge">
+                <motion.span
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  style={{ display: 'inline-flex' }}
+                >
+                  <Leaf size={14} />
+                </motion.span>
                 Farm Fresh Just a Click Away
               </motion.span>
 
-              <motion.h1 variants={fadeUp} className="hero-title">
+              <motion.h1 variants={slideLeft} className="hero-title">
                 Connect with Local Farmers,
                 <br />
-                <span className="hero-title-accent">Fresh from the Market</span>
+                <motion.span
+                  className="hero-title-accent"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                >
+                  Fresh from the Market
+                </motion.span>
               </motion.h1>
 
-              <motion.p variants={fadeUp} className="hero-subtitle">
+              <motion.p variants={slideLeft} className="hero-subtitle">
                 Connect directly with verified local farmers in your valley.
                 Reserve your weekly seasonal harvest before market day and
                 collect your basket at the stall with zero pre-payment required.
@@ -180,7 +258,11 @@ const HomePage = () => {
 
               {/* Search Bar */}
               <motion.div variants={fadeUp} className="hero-search-wrapper">
-                <div className="hero-search">
+                <motion.div
+                  className="hero-search"
+                  whileHover={{ y: -3 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="hero-search-input-row">
                     <Search size={18} className="hero-search-icon" />
                     <input
@@ -190,15 +272,20 @@ const HomePage = () => {
                       placeholder="Search heirloom tomatoes, honey, sourdough..."
                       className="hero-search-input"
                     />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="hero-search-clear"
-                      >
-                        Clear
-                      </button>
-                    )}
+                    <AnimatePresence>
+                      {searchQuery && (
+                        <motion.button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="hero-search-clear"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                        >
+                          Clear
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <div className="hero-search-days">
@@ -206,8 +293,8 @@ const HomePage = () => {
                       <Calendar size={13} />
                       Market Day:
                     </span>
-                    {days.map((d) => (
-                      <button
+                    {days.map((d, i) => (
+                      <motion.button
                         key={d}
                         type="button"
                         onClick={() => setSelectedDay(d === 'All Days' ? '' : d)}
@@ -216,41 +303,62 @@ const HomePage = () => {
                             ? 'active'
                             : ''
                         }`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 + i * 0.05, duration: 0.4 }}
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         {d}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
 
               {/* Proof Points */}
               <motion.div variants={fadeUp} className="hero-proof">
-                <div className="hero-proof-item">
+                <motion.div
+                  className="hero-proof-item"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <ShieldCheck size={16} />
                   <span>Verified Independent Growers</span>
-                </div>
+                </motion.div>
                 <span className="hero-proof-divider">·</span>
-                <div className="hero-proof-item">
+                <motion.div
+                  className="hero-proof-item"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <Clock size={16} />
                   <span>Real-Time Stock Visibility</span>
-                </div>
+                </motion.div>
                 <span className="hero-proof-divider">·</span>
-                <div className="hero-proof-item">
+                <motion.div
+                  className="hero-proof-item"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <MapPin size={16} />
                   <span>OpenStreetMap Coordinates</span>
-                </div>
+                </motion.div>
               </motion.div>
             </motion.div>
 
             {/* RIGHT — Hero Visual Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              initial="hidden"
+              animate="visible"
+              variants={scaleIn}
               className="hero-right"
             >
-              <div className="hero-visual-card">
+              <motion.div
+                className="hero-visual-card"
+                whileHover={{ scale: 1.02, rotate: -0.5 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              >
                 <img
                   src={basketHarvest3DImg}
                   alt="Organic farm fresh harvest basket"
@@ -258,15 +366,32 @@ const HomePage = () => {
                 />
                 <div className="hero-visual-overlay" />
                 <div className="hero-visual-content">
-                  <span className="hero-visual-tag">Featured Stall</span>
-                  <h3 className="hero-visual-title">
+                  <motion.span
+                    className="hero-visual-tag"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8, duration: 0.5 }}
+                  >
+                    Featured Stall
+                  </motion.span>
+                  <motion.h3
+                    className="hero-visual-title"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.9, duration: 0.5 }}
+                  >
                     Pick Up at Greenfield Market
-                  </h3>
-                  <p className="hero-visual-subtitle">
+                  </motion.h3>
+                  <motion.p
+                    className="hero-visual-subtitle"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1, duration: 0.5 }}
+                  >
                     Wednesday & Saturday Mornings · Pay cash or scan at stall
-                  </p>
+                  </motion.p>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
 
@@ -278,11 +403,15 @@ const HomePage = () => {
             className="hero-highlights"
           >
             {quickHighlights.map((item, idx) => (
-              <motion.div key={idx} variants={fadeUp}>
+              <motion.div key={idx} variants={cardPop} custom={idx}>
                 <Link to={item.to} className="hero-highlight-card">
-                  <div className="hero-highlight-icon">
+                  <motion.div
+                    className="hero-highlight-icon"
+                    whileHover={{ rotate: -8, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <img src={item.icon} alt={item.title} />
-                  </div>
+                  </motion.div>
                   <div className="hero-highlight-content">
                     <h4>{item.title}</h4>
                     <p>{item.subtitle}</p>
@@ -325,13 +454,26 @@ const HomePage = () => {
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
                   custom={idx}
-                  variants={fadeUp}
+                  variants={cardPop}
+                  whileHover={hoverLift}
                   className="step-card"
                 >
-                  <span className="step-number">{step.number}</span>
-                  <div className="step-icon">
+                  <motion.span
+                    className="step-number"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + idx * 0.12, duration: 0.5 }}
+                  >
+                    {step.number}
+                  </motion.span>
+                  <motion.div
+                    className="step-icon"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <Icon size={22} strokeWidth={1.8} />
-                  </div>
+                  </motion.div>
                   <h3 className="step-title">{step.title}</h3>
                   <p className="step-description">{step.description}</p>
                 </motion.div>
@@ -342,22 +484,32 @@ const HomePage = () => {
       </section>
 
       {/* ==================== FEATURED PRODUCTS ==================== */}
-   <section className="featured-products-section">
+      <section className="featured-products-section">
         <div className="container">
           {/* ...header unchanged... */}
 
           {loading ? (
             <Loader message="Loading products..." />
           ) : (
-            <div className="products-grid">
-              {featuredProducts.map((product) => (
-                <ProductCard
+            <motion.div
+              className="products-grid"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+            >
+              {featuredProducts.map((product, i) => (
+                <motion.div
                   key={product.product_id}
-                  product={product}
-                  isLoggedIn={isAuthenticated}          // ← pass down
-                />
+                  variants={fadeUp}
+                  custom={i}
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ProductCard product={product} isLoggedIn={isAuthenticated} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
@@ -380,7 +532,7 @@ const HomePage = () => {
                 Local Farmers Near You
               </motion.h2>
             </div>
-            <motion.div variants={fadeUp}>
+            <motion.div variants={fadeUp} whileHover={{ x: 6 }}>
               <Link to="/farmers" className="view-all-link">
                 View All <ArrowRight size={14} />
               </Link>
@@ -390,11 +542,25 @@ const HomePage = () => {
           {loading ? (
             <Loader message="Loading farmers..." />
           ) : (
-            <div className="farmers-grid">
-              {featuredFarmers.map((farmer) => (
-                <FarmerCard key={farmer.farmer_id} farmer={farmer} />
+            <motion.div
+              className="farmers-grid"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+            >
+              {featuredFarmers.map((farmer, i) => (
+                <motion.div
+                  key={farmer.farmer_id}
+                  variants={fadeUp}
+                  custom={i}
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FarmerCard farmer={farmer} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
@@ -417,12 +583,31 @@ const HomePage = () => {
             ].map((stat, idx) => {
               const Icon = stat.icon;
               return (
-                <motion.div key={idx} variants={fadeUp} className="trust-item">
-                  <div className="trust-icon">
+                <motion.div
+                  key={idx}
+                  variants={cardPop}
+                  custom={idx}
+                  whileHover={{ scale: 1.05, y: -4 }}
+                  transition={{ duration: 0.3 }}
+                  className="trust-item"
+                >
+                  <motion.div
+                    className="trust-icon"
+                    whileHover={{ rotate: 10 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <Icon size={20} strokeWidth={1.8} />
-                  </div>
+                  </motion.div>
                   <div className="trust-content">
-                    <span className="trust-value">{stat.value}</span>
+                    <motion.span
+                      className="trust-value"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 + idx * 0.1, duration: 0.5 }}
+                    >
+                      {stat.value}
+                    </motion.span>
                     <span className="trust-label">{stat.label}</span>
                   </div>
                 </motion.div>
@@ -432,42 +617,60 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ==================== CTA SECTION ==================== */}
-     {/* ==================== FARMER CTA (plain hero style) ==================== */}
-<section className="farmer-cta-section">
-  <div className="container">
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={stagger}
-      className="farmer-cta-content"
-    >
-      <motion.span variants={fadeUp} className="farmer-cta-badge">
-        <Tractor size={14} />
-        For Farmers
-      </motion.span>
+      {/* ==================== FARMER CTA ==================== */}
+      <section className="farmer-cta-section">
+        <div className="container">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger}
+            className="farmer-cta-content"
+          >
+            <motion.span variants={cardPop} className="farmer-cta-badge">
+              <motion.span
+                animate={{ x: [0, 4, -4, 0] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                style={{ display: 'inline-flex' }}
+              >
+                <Tractor size={14} />
+              </motion.span>
+              For Farmers
+            </motion.span>
 
-      <motion.h2 variants={fadeUp} className="farmer-cta-title">
-        Are You a Local Farmer?
-      </motion.h2>
+            <motion.h2 variants={fadeUp} className="farmer-cta-title">
+              Are You a Local Farmer?
+            </motion.h2>
 
-      <motion.p variants={fadeUp} className="farmer-cta-description">
-        Join MarketLink to reach more customers, manage your weekly stock,
-        and accept pre-orders. Grow your farm business with us.
-      </motion.p>
+            <motion.p variants={fadeUp} className="farmer-cta-description">
+              Join MarketLink to reach more customers, manage your weekly stock,
+              and accept pre-orders. Grow your farm business with us.
+            </motion.p>
 
-      <motion.div variants={fadeUp} className="farmer-cta-actions">
-        <Link to="/register/farmer" className="btn-farmer-cta">
-          Register as Farmer <ArrowRight size={16} />
-        </Link>
-        <Link to="/about" className="btn-farmer-cta-outline">
-          Learn More
-        </Link>
-      </motion.div>
-    </motion.div>
-  </div>
-</section>
+            <motion.div variants={fadeUp} className="farmer-cta-actions">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Link to="/register/farmer" className="btn-farmer-cta">
+                  Register as Farmer <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Link to="/about" className="btn-farmer-cta-outline">
+                  Learn More
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
