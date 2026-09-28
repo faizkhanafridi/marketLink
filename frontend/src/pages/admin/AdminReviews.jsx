@@ -162,7 +162,8 @@ const AdminReviews = () => {
 
           {/* Header */}
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Content Moderation</h1>
+                        <p className="dashboard-subtitle text-dark fw-bold ">Content Reviews</p>
+
             <p className="dashboard-subtitle">
               Review and moderate customer reviews across the platform
             </p>

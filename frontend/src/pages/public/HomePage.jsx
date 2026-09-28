@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   MapPin,
@@ -15,13 +15,13 @@ import {
   Users,
   Package,
   TrendingUp,
-} from 'lucide-react';
-import Navbar from '../../components/common/Navbar';
-import Footer from '../../components/common/Footer';
-import ProductCard from '../../components/common/ProductCard';
-import FarmerCard from '../../components/common/FarmerCard';
-import Loader from '../../components/common/Loader';
-import { productApi, farmerApi, marketApi } from '../../api';
+} from "lucide-react";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
+import ProductCard from "../../components/common/ProductCard";
+import FarmerCard from "../../components/common/FarmerCard";
+import Loader from "../../components/common/Loader";
+import { productApi, farmerApi, marketApi } from "../../api";
 import {
   heroMarket3DImg,
   basketHarvest3DImg,
@@ -29,20 +29,28 @@ import {
   iconMarket3D,
   iconPickup3D,
   iconHoney3D,
-} from '../../assets/images';
-import '../../styles/home.css';
-import { AuthContext } from '../../context/AuthContext';
+} from "../../assets/images";
+import "../../styles/home.css";
+import { AuthContext } from "../../context/AuthContext";
 
 const HomePage = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isFarmer, isCustomer, isAdmin } =
+    useContext(AuthContext);
+
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [featuredFarmers, setFeaturedFarmers] = useState([]);
   const [markets, setMarkets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDay, setSelectedDay] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDay, setSelectedDay] = useState("");
 
-  const days = ['All Days', 'Wednesday', 'Friday', 'Saturday', 'Sunday'];
+  const days = ["All Days", "Wednesday", "Friday", "Saturday", "Sunday"];
+
+  const [stats, setStats] = useState({
+    farmers: 0,
+    markets: 0,
+    products: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,11 +61,30 @@ const HomePage = () => {
           marketApi.getAll(),
         ]);
 
-        setFeaturedProducts(productsRes.data || productsRes || []);
-        setFeaturedFarmers(Array.isArray(farmersRes) ? farmersRes.slice(0, 4) : []);
-        setMarkets(Array.isArray(marketsRes) ? marketsRes.slice(0, 3) : []);
+        // -------- Products --------
+        const data = productsRes.data || productsRes;
+        const productsList = Array.isArray(data) ? data : [];
+        setFeaturedProducts(productsList);
+
+        // -------- Farmers --------
+        const farmersList = Array.isArray(farmersRes) ? farmersRes : [];
+        setFeaturedFarmers(farmersList.slice(0, 4));
+
+        // -------- Markets --------
+        const marketsList = Array.isArray(marketsRes) ? marketsRes : [];
+        setMarkets(marketsList.slice(0, 3));
+
+        // -------- Stats --------
+        setStats({
+          products:
+            productsRes.meta?.total ||
+            productsRes.total ||
+            productsList.length,
+          farmers: farmersList.length,
+          markets: marketsList.length,
+        });
       } catch (error) {
-        console.error('Error fetching home data:', error);
+        console.error("Error fetching home data:", error);
       } finally {
         setLoading(false);
       }
@@ -68,7 +95,6 @@ const HomePage = () => {
 
   // ==================== ANIMATION VARIANTS ====================
 
-  // Smooth fade-up with custom delay
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: (i = 0) => ({
@@ -82,7 +108,6 @@ const HomePage = () => {
     }),
   };
 
-  // Stagger container
   const stagger = {
     hidden: { opacity: 0 },
     visible: {
@@ -91,7 +116,6 @@ const HomePage = () => {
     },
   };
 
-  // Slide from left
   const slideLeft = {
     hidden: { opacity: 0, x: -40 },
     visible: {
@@ -101,17 +125,6 @@ const HomePage = () => {
     },
   };
 
-  // Slide from right
-  const slideRight = {
-    hidden: { opacity: 0, x: 40 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
-  // Scale + fade (for hero visual card)
   const scaleIn = {
     hidden: { opacity: 0, scale: 0.92 },
     visible: {
@@ -121,7 +134,6 @@ const HomePage = () => {
     },
   };
 
-  // Card pop-in (for step cards, highlights)
   const cardPop = {
     hidden: { opacity: 0, y: 40, scale: 0.95 },
     visible: (i = 0) => ({
@@ -136,60 +148,59 @@ const HomePage = () => {
     }),
   };
 
-  // Hover effect for cards
   const hoverLift = {
     y: -8,
-    transition: { duration: 0.3, ease: 'easeOut' },
+    transition: { duration: 0.3, ease: "easeOut" },
   };
 
   const quickHighlights = [
     {
-      title: 'Fresh Harvest',
-      subtitle: 'Dawn picked greens',
+      title: "Fresh Harvest",
+      subtitle: "Dawn picked greens",
       icon: iconProduce3D,
-      to: '/products',
+      to: "/products",
     },
     {
-      title: 'Local Markets',
-      subtitle: '3 Regional hubs',
+      title: "Local Markets",
+      subtitle: "Regional hubs",
       icon: iconMarket3D,
-      to: '/markets',
+      to: "/markets",
     },
     {
-      title: 'Artisan Goods',
-      subtitle: 'Honey & sourdough',
+      title: "Artisan Goods",
+      subtitle: "Honey & sourdough",
       icon: iconHoney3D,
-      to: '/products',
+      to: "/products",
     },
     {
-      title: 'Zero Risk Pickup',
-      subtitle: 'Pay cash at stall',
+      title: "Zero Risk Pickup",
+      subtitle: "Pay cash at stall",
       icon: iconPickup3D,
-      to: '/how-it-works',
+      to: "/about",
     },
   ];
 
   const steps = [
     {
-      number: '01',
+      number: "01",
       icon: Search,
-      title: 'Browse & Discover',
+      title: "Browse & Discover",
       description:
-        'Explore nearby markets and farmers. Browse fresh produce, dairy, baked goods and more.',
+        "Explore nearby markets and farmers. Browse fresh produce, dairy, baked goods and more.",
     },
     {
-      number: '02',
+      number: "02",
       icon: ShoppingBasket,
-      title: 'Pre-Order',
+      title: "Pre-Order",
       description:
-        'Add items to your basket and reserve them for pickup. Choose your pickup date and time slot.',
+        "Add items to your basket and reserve them for pickup. Choose your pickup date and time slot.",
     },
     {
-      number: '03',
+      number: "03",
       icon: Store,
-      title: 'Pickup & Enjoy',
+      title: "Pickup & Enjoy",
       description:
-        'Visit the market, collect your pre-ordered items, and pay in person. Fresh and ready for you.',
+        "Visit the market, collect your pre-ordered items, and pay in person. Fresh and ready for you.",
     },
   ];
 
@@ -199,7 +210,6 @@ const HomePage = () => {
 
       {/* ==================== HERO SECTION ==================== */}
       <section className="hero-section">
-        {/* Full-bleed background image with subtle zoom */}
         <div className="hero-bg">
           <motion.img
             src={heroMarket3DImg}
@@ -230,7 +240,7 @@ const HomePage = () => {
                 <motion.span
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                  style={{ display: 'inline-flex' }}
+                  style={{ display: "inline-flex" }}
                 >
                   <Leaf size={14} />
                 </motion.span>
@@ -276,7 +286,7 @@ const HomePage = () => {
                       {searchQuery && (
                         <motion.button
                           type="button"
-                          onClick={() => setSearchQuery('')}
+                          onClick={() => setSearchQuery("")}
                           className="hero-search-clear"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -297,11 +307,14 @@ const HomePage = () => {
                       <motion.button
                         key={d}
                         type="button"
-                        onClick={() => setSelectedDay(d === 'All Days' ? '' : d)}
+                        onClick={() =>
+                          setSelectedDay(d === "All Days" ? "" : d)
+                        }
                         className={`hero-day-btn ${
-                          (d === 'All Days' && !selectedDay) || selectedDay === d
-                            ? 'active'
-                            : ''
+                          (d === "All Days" && !selectedDay) ||
+                          selectedDay === d
+                            ? "active"
+                            : ""
                         }`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -357,7 +370,7 @@ const HomePage = () => {
               <motion.div
                 className="hero-visual-card"
                 whileHover={{ scale: 1.02, rotate: -0.5 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
                 <img
                   src={basketHarvest3DImg}
@@ -408,7 +421,7 @@ const HomePage = () => {
                   <motion.div
                     className="hero-highlight-icon"
                     whileHover={{ rotate: -8, scale: 1.1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   >
                     <img src={item.icon} alt={item.title} />
                   </motion.div>
@@ -440,7 +453,8 @@ const HomePage = () => {
               Fresh Food in Three Simple Steps
             </motion.h2>
             <motion.p variants={fadeUp} className="section-subtitle">
-              From browsing to pickup, we've made it easy to support local farmers.
+              From browsing to pickup, we've made it easy to support local
+              farmers.
             </motion.p>
           </motion.div>
 
@@ -470,7 +484,7 @@ const HomePage = () => {
                   <motion.div
                     className="step-icon"
                     whileHover={{ rotate: 10, scale: 1.1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   >
                     <Icon size={22} strokeWidth={1.8} />
                   </motion.div>
@@ -486,10 +500,32 @@ const HomePage = () => {
       {/* ==================== FEATURED PRODUCTS ==================== */}
       <section className="featured-products-section">
         <div className="container">
-          {/* ...header unchanged... */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger}
+            className="section-header-row"
+          >
+            <div>
+              <motion.span variants={fadeUp} className="section-tag">
+                Fresh Picks
+              </motion.span>
+              <motion.h2 variants={fadeUp} className="section-title">
+                Featured Products
+              </motion.h2>
+            </div>
+            <motion.div variants={fadeUp} whileHover={{ x: 6 }}>
+              <Link to="/products" className="view-all-link">
+                View All <ArrowRight size={14} />
+              </Link>
+            </motion.div>
+          </motion.div>
 
           {loading ? (
             <Loader message="Loading products..." />
+          ) : featuredProducts.length === 0 ? (
+            <p className="no-data-message">No products available yet.</p>
           ) : (
             <motion.div
               className="products-grid"
@@ -506,7 +542,10 @@ const HomePage = () => {
                   whileHover={{ y: -6 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ProductCard product={product} isLoggedIn={isAuthenticated} />
+                  <ProductCard
+                    product={product}
+                    isLoggedIn={isAuthenticated}
+                  />
                 </motion.div>
               ))}
             </motion.div>
@@ -541,6 +580,8 @@ const HomePage = () => {
 
           {loading ? (
             <Loader message="Loading farmers..." />
+          ) : featuredFarmers.length === 0 ? (
+            <p className="no-data-message">No farmers registered yet.</p>
           ) : (
             <motion.div
               className="farmers-grid"
@@ -576,10 +617,27 @@ const HomePage = () => {
             className="trust-grid"
           >
             {[
-              { icon: Users, value: `${featuredFarmers.length || 120}+`, label: 'Local Farmers' },
-              { icon: MapPin, value: `${markets.length || 12}+`, label: 'Markets' },
-              { icon: Package, value: `${featuredProducts.length || 480}+`, label: 'Fresh Products' },
-              { icon: TrendingUp, value: '98%', label: 'Pickup Rate' },
+              {
+                icon: Users,
+                value: stats.farmers,
+                label: "Local Farmers",
+              },
+              {
+                icon: MapPin,
+                value: stats.markets,
+                label: "Markets",
+              },
+              {
+                icon: Package,
+                value: stats.products,
+                label: "Fresh Products",
+              },
+              {
+                icon: TrendingUp,
+                value: "Cash on Pickup",
+                label: "Zero Pre-Payment",
+                isText: true,
+              },
             ].map((stat, idx) => {
               const Icon = stat.icon;
               return (
@@ -594,19 +652,25 @@ const HomePage = () => {
                   <motion.div
                     className="trust-icon"
                     whileHover={{ rotate: 10 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   >
                     <Icon size={20} strokeWidth={1.8} />
                   </motion.div>
                   <div className="trust-content">
                     <motion.span
-                      className="trust-value"
+                      className={`trust-value ${
+                        stat.isText ? "trust-value-text" : ""
+                      }`}
                       initial={{ opacity: 0, scale: 0.5 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.2 + idx * 0.1, duration: 0.5 }}
                     >
-                      {stat.value}
+                      {stat.isText
+                        ? stat.value
+                        : stat.value >= 10
+                        ? `${stat.value}+`
+                        : stat.value}
                     </motion.span>
                     <span className="trust-label">{stat.label}</span>
                   </div>
@@ -617,59 +681,181 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ==================== FARMER CTA ==================== */}
-      <section className="farmer-cta-section">
-        <div className="container">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={stagger}
-            className="farmer-cta-content"
-          >
-            <motion.span variants={cardPop} className="farmer-cta-badge">
-              <motion.span
-                animate={{ x: [0, 4, -4, 0] }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                style={{ display: 'inline-flex' }}
-              >
-                <Tractor size={14} />
+      {/* ==================== ROLE-AWARE CTA ==================== */}
+
+      {/* GUEST — For Farmers CTA */}
+      {!isAuthenticated && (
+        <section className="farmer-cta-section">
+          <div className="container">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+              className="farmer-cta-content"
+            >
+              <motion.span variants={cardPop} className="farmer-cta-badge">
+                <motion.span
+                  animate={{ x: [0, 4, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <Tractor size={14} />
+                </motion.span>
+                For Farmers
               </motion.span>
-              For Farmers
-            </motion.span>
 
-            <motion.h2 variants={fadeUp} className="farmer-cta-title">
-              Are You a Local Farmer?
-            </motion.h2>
+              <motion.h2 variants={fadeUp} className="farmer-cta-title">
+                Are You a Local Farmer?
+              </motion.h2>
 
-            <motion.p variants={fadeUp} className="farmer-cta-description">
-              Join MarketLink to reach more customers, manage your weekly stock,
-              and accept pre-orders. Grow your farm business with us.
-            </motion.p>
+              <motion.p variants={fadeUp} className="farmer-cta-description">
+                Join MarketLink to reach more customers, manage your weekly
+                stock, and accept pre-orders. Grow your farm business with us.
+              </motion.p>
 
-            <motion.div variants={fadeUp} className="farmer-cta-actions">
-              <motion.div
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.25 }}
-              >
-                <Link to="/register/farmer" className="btn-farmer-cta">
-                  Register as Farmer <ArrowRight size={16} />
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.25 }}
-              >
-                <Link to="/about" className="btn-farmer-cta-outline">
-                  Learn More
-                </Link>
+              <motion.div variants={fadeUp} className="farmer-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/register/farmer" className="btn-farmer-cta">
+                    Register as Farmer <ArrowRight size={16} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/about" className="btn-farmer-cta-outline">
+                    Learn More
+                  </Link>
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
+
+      {/* FARMER — customer upsell */}
+      {isFarmer && (
+        <section className="farmer-cta-section">
+          <div className="container">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+              className="farmer-cta-content"
+            >
+              <motion.span variants={cardPop} className="farmer-cta-badge">
+                <motion.span
+                  animate={{ x: [0, 4, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <ShoppingBasket size={14} />
+                </motion.span>
+                For Customers
+              </motion.span>
+
+              <motion.h2 variants={fadeUp} className="farmer-cta-title">
+                Want to Shop as a Customer?
+              </motion.h2>
+
+              <motion.p variants={fadeUp} className="farmer-cta-description">
+                You're registered as a farmer. Create a customer account to
+                browse and pre-order fresh produce from other local farmers
+                near you.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="farmer-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/register" className="btn-farmer-cta">
+                    Register as Customer <ArrowRight size={16} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/products" className="btn-farmer-cta-outline">
+                    Browse Products
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* CUSTOMER — next order CTA */}
+      {isCustomer && (
+        <section className="farmer-cta-section">
+          <div className="container">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+              className="farmer-cta-content"
+            >
+              <motion.span variants={cardPop} className="farmer-cta-badge">
+                <motion.span
+                  animate={{ x: [0, 4, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <ShoppingBasket size={14} />
+                </motion.span>
+                Your Basket
+              </motion.span>
+
+              <motion.h2 variants={fadeUp} className="farmer-cta-title">
+                Ready for Your Next Fresh Order?
+              </motion.h2>
+
+              <motion.p variants={fadeUp} className="farmer-cta-description">
+                Browse this week's seasonal harvest, reserve what you love, and
+                pick up at the market. Zero pre-payment — pay cash at the stall.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="farmer-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/products" className="btn-farmer-cta">
+                    Browse Products <ArrowRight size={16} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link
+                    to="/customer/orders"
+                    className="btn-farmer-cta-outline"
+                  >
+                    My Orders
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ADMIN — nothing shown */}
 
       <Footer />
     </div>

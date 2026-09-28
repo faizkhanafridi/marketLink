@@ -107,7 +107,10 @@ const AdminDashboard = () => {
         <main className="dashboard-main">
 
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Admin Dashboard</h1>
+            {/* <h1 className="dashboard-title">Admin Dashboard</h1> */}
+            <p className="dashboard-subtitle text-dark fw-bold">
+              Admin Dashboard
+            </p>
             <p className="dashboard-subtitle">
               Platform overview and key metrics
             </p>

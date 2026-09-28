@@ -5,9 +5,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import { FlyToCartProvider } from './context/FlyToCartContext';   // ✅ ADD
+import { FlyToCartProvider } from './context/FlyToCartContext'; 
 import ProtectedRoute from './components/common/ProtectedRoute';
-import FlyToCartLayer from './components/common/FlyToCartLayer';  // ✅ ADD
+import FlyToCartLayer from './components/common/FlyToCartLayer';  
 
 // Public Pages
 import HomePage from './pages/public/HomePage';
@@ -51,13 +51,14 @@ import AdminReports from './pages/admin/AdminReports';
 
 import './App.css';
 import NotFoundPage from './pages/public/NotFoundPage';
+import AdminProducts from './pages/admin/AdminProducts';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <CartProvider>
-          <FlyToCartProvider>                              {/* ✅ ADD */}
+          <FlyToCartProvider>                              
             <div className="app-container">
               <Routes>
                 {/* Public Routes */}
@@ -209,6 +210,15 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
+                 <Route
+                  path="/admin/products"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <AdminProducts />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/admin/reviews"
                   element={
@@ -228,11 +238,11 @@ function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
 
-              <FlyToCartLayer />                          {/* ✅ ADD */}
+              <FlyToCartLayer />                          
 
               <ToastContainer position="top-right" autoClose={3000} />
             </div>
-          </FlyToCartProvider>                           {/* ✅ ADD */}
+          </FlyToCartProvider>                           
         </CartProvider>
       </AuthProvider>
     </Router>

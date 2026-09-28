@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -13,19 +13,92 @@ import {
   Tractor,
   ShoppingBasket,
   Store,
+  Package,
 } from "lucide-react";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
+import { productApi, farmerApi, marketApi } from "../../api";
+import { AuthContext } from "../../context/AuthContext";
 import "../../styles/home.css";
 import "../../styles/page-hero.css";
 import "../../styles/about.css";
 
 const AboutPage = () => {
-  const stats = [
-    { icon: Users, value: "120+", label: "Local Farmers" },
-    { icon: MapPin, value: "12+", label: "Partner Markets" },
-    { icon: ShoppingBasket, value: "480+", label: "Fresh Products" },
-    { icon: ShieldCheck, value: "98%", label: "Pickup Success" },
+  const { isAuthenticated, isFarmer, isCustomer, isAdmin } =
+    useContext(AuthContext);
+
+  const [stats, setStats] = useState({
+    farmers: 0,
+    markets: 0,
+    products: 0,
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // ---------------------------------------------
+  // FETCH REAL STATS
+  // ---------------------------------------------
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [productsRes, farmersRes, marketsRes] = await Promise.all([
+          productApi.getAll({ per_page: 1, is_available: true }),
+          farmerApi.getAll(),
+          marketApi.getAll(),
+        ]);
+
+        // Products: use API pagination total
+        const productsData = productsRes.data || productsRes;
+        const productsList = Array.isArray(productsData) ? productsData : [];
+
+        // Farmers and markets: full array lengths
+        const farmersList = Array.isArray(farmersRes) ? farmersRes : [];
+        const marketsList = Array.isArray(marketsRes) ? marketsRes : [];
+
+        setStats({
+          products:
+            productsRes.meta?.total ||
+            productsRes.total ||
+            productsList.length,
+          farmers: farmersList.length,
+          markets: marketsList.length,
+        });
+      } catch (error) {
+        console.error("Error fetching about stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // =========================================================
+  // STATIC CONTENT
+  // =========================================================
+
+  // Stats bar — now uses fetched values
+  const statItems = [
+    {
+      icon: Users,
+      value: stats.farmers,
+      label: "Local Farmers",
+    },
+    {
+      icon: MapPin,
+      value: stats.markets,
+      label: "Partner Markets",
+    },
+    {
+      icon: Package,
+      value: stats.products,
+      label: "Fresh Products",
+    },
+    {
+      icon: ShieldCheck,
+      value: "Zero Pre-Pay",
+      label: "Pay at Pickup",
+      isText: true,
+    },
   ];
 
   const values = [
@@ -129,6 +202,13 @@ const AboutPage = () => {
     },
   };
 
+  // Helper: format stat with `+` only when >= 10
+  const formatStatValue = (stat) => {
+    if (stat.isText) return stat.value;
+    if (stat.value >= 10) return `${stat.value}+`;
+    return stat.value;
+  };
+
   return (
     <div className="about-page">
       <Navbar />
@@ -179,7 +259,8 @@ const AboutPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.7 }}
                 >
-                  {" "}and Community
+                  {" "}
+                  and Community
                 </motion.span>
               </motion.h1>
 
@@ -199,7 +280,6 @@ const AboutPage = () => {
       <section className="about-story-section">
         <div className="container">
           <div className="about-story-grid">
-            {/* Content slides from left */}
             <motion.div
               className="about-story-content"
               initial="hidden"
@@ -273,7 +353,6 @@ const AboutPage = () => {
               </motion.div>
             </motion.div>
 
-            {/* Visual slides from right */}
             <motion.div
               className="about-story-visual"
               initial="hidden"
@@ -332,7 +411,7 @@ const AboutPage = () => {
       </section>
 
       {/* =========================================================
-          STATS BAR
+          STATS BAR — real numbers
       ========================================================= */}
       <section className="about-stats-section">
         <div className="container">
@@ -343,7 +422,7 @@ const AboutPage = () => {
             viewport={{ once: true, amount: 0.3 }}
             variants={stagger}
           >
-            {stats.map((stat, idx) => {
+            {statItems.map((stat, idx) => {
               const Icon = stat.icon;
               return (
                 <motion.div
@@ -363,7 +442,9 @@ const AboutPage = () => {
                   </motion.div>
                   <div className="about-stat-content">
                     <motion.span
-                      className="about-stat-value"
+                      className={`about-stat-value ${
+                        stat.isText ? "about-stat-value-text" : ""
+                      }`}
                       initial={{ opacity: 0, scale: 0.5 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
@@ -374,7 +455,7 @@ const AboutPage = () => {
                         stiffness: 260,
                       }}
                     >
-                      {stat.value}
+                      {statsLoading ? "—" : formatStatValue(stat)}
                     </motion.span>
                     <span className="about-stat-label">{stat.label}</span>
                   </div>
@@ -523,68 +604,199 @@ const AboutPage = () => {
       </section>
 
       {/* =========================================================
-          CTA — plain hero style
+          CTA — role-aware
       ========================================================= */}
-      <section className="about-cta-section">
-        <div className="container">
-          <motion.div
-            className="about-cta-inner"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={stagger}
-          >
-            <motion.span variants={fadeUp} className="about-cta-badge">
-              <motion.span
-                animate={{ rotate: [0, 20, -20, 0] }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                }}
-                style={{ display: "inline-flex" }}
-              >
-                <Sparkles size={13} />
-              </motion.span>
-              Ready When You Are
-            </motion.span>
 
-            <motion.h2 variants={fadeUp} className="about-cta-title">
-              Ready to taste the difference?
-            </motion.h2>
-
-            <motion.p variants={fadeUp} className="about-cta-text">
-              Discover fresh produce from farmers near you — or join MarketLink
-              as a grower and reach more customers.
-            </motion.p>
-
-            <motion.div variants={fadeUp} className="about-cta-actions">
-              <motion.div
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.25 }}
-              >
-                <Link to="/products" className="about-btn about-btn-primary">
-                  Browse Products
-                  <ArrowRight size={15} />
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.25 }}
-              >
-                <Link
-                  to="/register/farmer"
-                  className="about-btn about-btn-outline"
+      {/* GUEST — full dual CTA */}
+      {!isAuthenticated && (
+        <section className="about-cta-section">
+          <div className="container">
+            <motion.div
+              className="about-cta-inner"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+            >
+              <motion.span variants={fadeUp} className="about-cta-badge">
+                <motion.span
+                  animate={{ rotate: [0, 20, -20, 0] }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatDelay: 2,
+                  }}
+                  style={{ display: "inline-flex" }}
                 >
-                  Register as Farmer
-                </Link>
+                  <Sparkles size={13} />
+                </motion.span>
+                Ready When You Are
+              </motion.span>
+
+              <motion.h2 variants={fadeUp} className="about-cta-title">
+                Ready to taste the difference?
+              </motion.h2>
+
+              <motion.p variants={fadeUp} className="about-cta-text">
+                Discover fresh produce from farmers near you — or join
+                MarketLink as a grower and reach more customers.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="about-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/products" className="about-btn about-btn-primary">
+                    Browse Products
+                    <ArrowRight size={15} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link
+                    to="/register/farmer"
+                    className="about-btn about-btn-outline"
+                  >
+                    Register as Farmer
+                  </Link>
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
+
+      {/* FARMER — customer upsell */}
+      {isFarmer && (
+        <section className="about-cta-section">
+          <div className="container">
+            <motion.div
+              className="about-cta-inner"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+            >
+              <motion.span variants={fadeUp} className="about-cta-badge">
+                <motion.span
+                  animate={{ rotate: [0, 20, -20, 0] }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatDelay: 2,
+                  }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <ShoppingBasket size={13} />
+                </motion.span>
+                For Customers
+              </motion.span>
+
+              <motion.h2 variants={fadeUp} className="about-cta-title">
+                Explore the Marketplace
+              </motion.h2>
+
+              <motion.p variants={fadeUp} className="about-cta-text">
+                Curious to see what other local farmers are offering? Browse
+                products from the community or explore markets near you.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="about-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/products" className="about-btn about-btn-primary">
+                    Browse Products
+                    <ArrowRight size={15} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/markets" className="about-btn about-btn-outline">
+                    Explore Markets
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* CUSTOMER — next order CTA */}
+      {isCustomer && (
+        <section className="about-cta-section">
+          <div className="container">
+            <motion.div
+              className="about-cta-inner"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+            >
+              <motion.span variants={fadeUp} className="about-cta-badge">
+                <motion.span
+                  animate={{ rotate: [0, 20, -20, 0] }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatDelay: 2,
+                  }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <Sparkles size={13} />
+                </motion.span>
+                Ready for Your Next Order?
+              </motion.span>
+
+              <motion.h2 variants={fadeUp} className="about-cta-title">
+                Fresh from the Farm, One Click Away
+              </motion.h2>
+
+              <motion.p variants={fadeUp} className="about-cta-text">
+                Browse this week's harvest from verified local growers, reserve
+                what you love, and pick it up at your nearest market.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="about-cta-actions">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link to="/products" className="about-btn about-btn-primary">
+                    Browse Products
+                    <ArrowRight size={15} />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Link
+                    to="/customer/orders"
+                    className="about-btn about-btn-outline"
+                  >
+                    My Orders
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ADMIN — nothing shown */}
 
       <Footer />
     </div>

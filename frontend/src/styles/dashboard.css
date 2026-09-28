@@ -28,6 +28,33 @@
   border: 1px solid #ebe8e2;
   position: sticky;
   top: 100px;
+  max-height: calc(100vh - 120px);   /* fits below the navbar */
+  overflow-y: auto;                   /* sidebar scrolls internally only if too tall */
+  overscroll-behavior: contain;       /* prevents scroll from bleeding to the page */
+}
+
+/* Slim, subtle scrollbar for the sidebar */
+.dashboard-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb {
+  background: #e7e5e4;
+  border-radius: 3px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #d6d3d1;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox */
+.dashboard-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #e7e5e4 transparent;
 }
 
 .sidebar-nav {
@@ -129,7 +156,7 @@
 .sidebar-sublink {
   font-size: 13px;
   padding: 8px 16px;
-  opacity: 0.85;
+  
 }
 
 .sidebar-sublink i {

@@ -79,8 +79,11 @@ const AdminUsers = () => {
         <AdminSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Manage Users</h1>
+            <p className="dashboard-subtitle text-dark">
+              Manager Users 
+               </p>
             <p className="dashboard-subtitle">
+               
               View, approve, and manage user accounts
             </p>
           </div>

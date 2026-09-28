@@ -76,7 +76,9 @@ const AdminCategories = () => {
         <AdminSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Manage Categories</h1>
+              <p className="dashboard-subtitle text-dark fw-bold">
+              Manager Categories
+            </p>
             <p className="dashboard-subtitle">
               Organize your products with categories
             </p>
@@ -84,20 +86,7 @@ const AdminCategories = () => {
 
           {/* Add Category Card */}
           <div className="dashboard-card category-add-card">
-            <div className="card-header-row">
-              <div>
-                <h3 className="card-title">Add New Category</h3>
-                <p className="card-subtitle">
-                  Give it a short, descriptive name
-                </p>
-              </div>
-              <span className="category-count-badge">
-                <i className="fas fa-tags"></i>
-                {categories.length}{' '}
-                {categories.length === 1 ? 'category' : 'categories'}
-              </span>
-            </div>
-
+         
             <form onSubmit={handleCreate} className="category-form">
               <div className="input-with-icon">
                 <i className="fas fa-tag input-icon"></i>
@@ -126,6 +115,7 @@ const AdminCategories = () => {
                   </>
                 )}
               </button>
+            
             </form>
           </div>
 
@@ -142,6 +132,11 @@ const AdminCategories = () => {
             <div className="dashboard-card">
               <div className="card-header-row">
                 <h3 className="card-title">All Categories</h3>
+                      <span className="category-count-badge">
+                <i className="fas fa-tags"></i>
+                {categories.length}{' '}
+                {categories.length === 1 ? 'category' : 'categories'}
+              </span>
               </div>
 
               <div className="category-grid">
