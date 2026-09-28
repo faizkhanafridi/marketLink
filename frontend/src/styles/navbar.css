@@ -294,6 +294,14 @@
   font-weight: 700;
   text-transform: uppercase;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .user-name {
@@ -491,7 +499,6 @@
   will-change: transform;
 }
 
-/* ---------- Drawer header ---------- */
 .mobile-drawer-head {
   display: flex;
   align-items: center;
@@ -579,7 +586,6 @@
   color: #b91c1c;
 }
 
-/* ---------- Drawer nav links ---------- */
 .mobile-drawer-nav {
   display: flex;
   flex-direction: column;
@@ -633,7 +639,6 @@
   transform: translateX(2px);
 }
 
-/* ---------- Drawer footer (auth) ---------- */
 .mobile-drawer-foot {
   display: flex;
   flex-direction: column;
@@ -964,5 +969,82 @@
 
   .mobile-drawer-brand-tag {
     display: none;
+  }
+}
+
+/* ============================================================
+   AI CHATBOT BUTTON — icon only, no background
+   ============================================================ */
+
+.ai-button {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: #194d26;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.ai-button:hover {
+  background: #eef4e8;
+  color: #143e1f;
+}
+
+.ai-button:active {
+  background: #dfe8dc;
+}
+
+/* ============================================================
+   MOBILE DRAWER AI BUTTON
+   ============================================================ */
+
+.mobile-drawer-ai {
+  padding: 0 14px 8px;
+}
+
+.mobile-drawer-ai-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #194d26;
+  border-radius: 12px;
+  background: #194d26;
+  color: #ffffff;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer-ai-btn:hover {
+  background: #143e1f;
+  border-color: #143e1f;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px -6px rgba(25, 77, 38, 0.35);
+}
+
+.mobile-drawer-ai-btn svg:first-child {
+  color: #6ee7b7;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .ai-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
   }
 }

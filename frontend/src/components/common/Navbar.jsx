@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingBag,
   ChevronDown,
@@ -13,19 +13,21 @@ import {
   User,
   ArrowRight,
   Sprout,
-} from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import { useCart } from '../../hooks/useCart';
-import Logo from './Logo';
-import '../../styles/navbar.css';
+  Sparkles,
+  Bot,
+} from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
+import Logo from "./Logo";
+import "../../styles/navbar.css";
 
 const NAV_ITEMS = [
-  { label: 'Home', to: '/', end: true },
-  { label: 'Products', to: '/products' },
-  { label: 'Markets', to: '/markets' },
-  { label: 'Farmers', to: '/farmers' },
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
+  { label: "Home", to: "/", end: true },
+  { label: "Products", to: "/products" },
+  { label: "Markets", to: "/markets" },
+  { label: "Farmers", to: "/farmers" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
 ];
 
 const Navbar = () => {
@@ -43,25 +45,25 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!e.target.closest('.user-menu-wrapper')) {
+      if (!e.target.closest(".user-menu-wrapper")) {
         setUserMenuOpen(false);
       }
     };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [mobileOpen]);
 
@@ -69,16 +71,23 @@ const Navbar = () => {
     setUserMenuOpen(false);
     setMobileOpen(false);
     await logout();
-    navigate('/');
+    navigate("/");
   };
 
   const getDashboardLink = () => {
-    if (user?.role === 'farmer') return '/farmer';
-    if (user?.role === 'admin') return '/admin';
-    return '/customer';
+    if (user?.role === "farmer") return "/farmer";
+    if (user?.role === "admin") return "/admin";
+    return "/customer";
   };
 
   const cartCount = getCartCount ? getCartCount() : 0;
+
+  /* ---------- AI chatbot: only for logged-in customers ---------- */
+  const showChatbot = isAuthenticated && user?.role === "customer";
+
+  const openChatbot = () => {
+    window.dispatchEvent(new CustomEvent("toggleChatbot"));
+  };
 
   /* ---------- Desktop animation variants ---------- */
   const navVariants = {
@@ -103,7 +112,7 @@ const Navbar = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: 'easeOut' },
+      transition: { duration: 0.4, ease: "easeOut" },
     },
   };
 
@@ -112,7 +121,7 @@ const Navbar = () => {
     visible: {
       x: 0,
       opacity: 1,
-      transition: { duration: 0.6, ease: 'easeOut' },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
   };
 
@@ -121,19 +130,19 @@ const Navbar = () => {
     visible: {
       x: 0,
       opacity: 1,
-      transition: { duration: 0.6, ease: 'easeOut' },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
   };
 
   /* ---------- Mobile drawer animation variants ---------- */
   const drawerVariants = {
-    hidden: { x: '100%' },
+    hidden: { x: "100%" },
     visible: {
       x: 0,
       transition: { duration: 0.42, ease: [0.32, 0.72, 0, 1] },
     },
     exit: {
-      x: '100%',
+      x: "100%",
       transition: { duration: 0.32, ease: [0.32, 0.72, 0, 1] },
     },
   };
@@ -161,14 +170,18 @@ const Navbar = () => {
           NAVBAR BAR
       ============================================================ */}
       <motion.nav
-        className={`marketlink-navbar ${scrolled ? 'scrolled' : ''}`}
+        className={`marketlink-navbar ${scrolled ? "scrolled" : ""}`}
         variants={navVariants}
         initial="hidden"
         animate="visible"
       >
         <div className="navbar-container">
           {/* ===== BRAND ===== */}
-          <motion.div variants={brandVariants} initial="hidden" animate="visible">
+          <motion.div
+            variants={brandVariants}
+            initial="hidden"
+            animate="visible"
+          >
             <Link
               to="/"
               className="navbar-brand"
@@ -177,7 +190,7 @@ const Navbar = () => {
               <motion.div
                 className="brand-logo"
                 whileHover={{ rotate: -6, scale: 1.08 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
               >
                 <Logo size={42} />
               </motion.div>
@@ -216,7 +229,7 @@ const Navbar = () => {
           >
             {isAuthenticated ? (
               <>
-                {user?.role === 'customer' && (
+                {user?.role === "customer" && (
                   <motion.div
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
@@ -233,7 +246,7 @@ const Navbar = () => {
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{
-                            type: 'spring',
+                            type: "spring",
                             stiffness: 500,
                             damping: 15,
                           }}
@@ -245,6 +258,21 @@ const Navbar = () => {
                   </motion.div>
                 )}
 
+                {/* ===== AI CHATBOT BUTTON — customers only ===== */}
+              {/* ===== AI CHATBOT BUTTON — customers only ===== */}
+{showChatbot && (
+  <motion.button
+    type="button"
+    className="ai-button"
+    onClick={openChatbot}
+    aria-label="Open AI assistant"
+    title="Ask MarketLink AI"
+    whileHover={{ scale: 1.08 }}
+    whileTap={{ scale: 0.94 }}
+  >
+    <Bot size={19} strokeWidth={2} />
+  </motion.button>
+)}
                 <div className="user-menu-wrapper">
                   <motion.button
                     type="button"
@@ -259,13 +287,13 @@ const Navbar = () => {
                     whileTap={{ scale: 0.97 }}
                   >
                     <span className="user-avatar">
-                      {user?.username?.charAt(0).toUpperCase() || '?'}
+                      {user?.username?.charAt(0).toUpperCase() || "?"}
                     </span>
                     <span className="user-name">{user?.username}</span>
                     <motion.span
                       animate={{ rotate: userMenuOpen ? 180 : 0 }}
                       transition={{ duration: 0.25 }}
-                      style={{ display: 'inline-flex' }}
+                      style={{ display: "inline-flex" }}
                     >
                       <ChevronDown size={13} className="user-chevron" />
                     </motion.span>
@@ -278,7 +306,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, y: -10, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.96 }}
-                        transition={{ duration: 0.22, ease: 'easeOut' }}
+                        transition={{ duration: 0.22, ease: "easeOut" }}
                       >
                         <div className="user-dropdown-header">
                           <span className="user-dropdown-name">
@@ -297,7 +325,7 @@ const Navbar = () => {
                           <span>Dashboard</span>
                         </Link>
 
-                        {user?.role === 'customer' && (
+                        {user?.role === "customer" && (
                           <>
                             <Link
                               to="/customer/orders"
@@ -316,7 +344,7 @@ const Navbar = () => {
                           </>
                         )}
 
-                        {user?.role !== 'admin' && (
+                        {user?.role !== "admin" && (
                           <Link
                             to={`${getDashboardLink()}/profile`}
                             className="dropdown-item"
@@ -382,7 +410,7 @@ const Navbar = () => {
                     animate={{ rotate: 0, opacity: 1 }}
                     exit={{ rotate: 90, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    style={{ display: 'inline-flex' }}
+                    style={{ display: "inline-flex" }}
                   >
                     <X size={20} />
                   </motion.span>
@@ -393,7 +421,7 @@ const Navbar = () => {
                     animate={{ rotate: 0, opacity: 1 }}
                     exit={{ rotate: -90, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    style={{ display: 'inline-flex' }}
+                    style={{ display: "inline-flex" }}
                   >
                     <Menu size={20} />
                   </motion.span>
@@ -405,7 +433,7 @@ const Navbar = () => {
       </motion.nav>
 
       {/* ============================================================
-          MOBILE DRAWER + BACKDROP — RENDERED OUTSIDE NAVBAR
+          MOBILE DRAWER + BACKDROP
       ============================================================ */}
       <AnimatePresence>
         {mobileOpen && (
@@ -426,7 +454,6 @@ const Navbar = () => {
               animate="visible"
               exit="exit"
             >
-              {/* Drawer header */}
               <div className="mobile-drawer-head">
                 <Link
                   to="/"
@@ -458,7 +485,6 @@ const Navbar = () => {
                 </button>
               </div>
 
-              {/* Drawer nav */}
               <motion.nav
                 className="mobile-drawer-nav"
                 variants={drawerListVariants}
@@ -471,20 +497,38 @@ const Navbar = () => {
                       to={item.to}
                       end={item.end}
                       className={({ isActive }) =>
-                        `mobile-drawer-link ${isActive ? 'active' : ''}`
+                        `mobile-drawer-link ${isActive ? "active" : ""}`
                       }
                       onClick={() => setMobileOpen(false)}
                     >
                       <span className="mobile-drawer-link-label">
                         {item.label}
                       </span>
-                      <ArrowRight size={14} className="mobile-drawer-link-arrow" />
+                      <ArrowRight
+                        size={14}
+                        className="mobile-drawer-link-arrow"
+                      />
                     </NavLink>
                   </motion.div>
                 ))}
               </motion.nav>
 
-              {/* Drawer footer: auth buttons */}
+              {/* AI Chatbot CTA — customers only */}
+              {/* ===== AI CHATBOT BUTTON — customers only ===== */}
+              {showChatbot && (
+                <motion.button
+                  type="button"
+                  className="ai-button"
+                  onClick={openChatbot}
+                  aria-label="Open AI assistant"
+                  title="Ask MarketLink AI"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.94 }}
+                >
+                  <Bot size={19} strokeWidth={2} />
+                </motion.button>
+              )}
+
               {!isAuthenticated && (
                 <motion.div
                   className="mobile-drawer-foot"

@@ -9,9 +9,10 @@ const FarmerSidebar = () => {
   const currentSearch = new URLSearchParams(location.search);
   const currentStatus = currentSearch.get('status');
 
+  // All sections expanded by default
   const [expanded, setExpanded] = useState({
-    products: currentPath.startsWith('/farmer/products'),
-    orders: currentPath.startsWith('/farmer/orders'),
+    products: true,
+    orders: true,
   });
 
   const toggleSection = (key) => {
@@ -24,10 +25,6 @@ const FarmerSidebar = () => {
 
   const isOrderStatusActive = (status) =>
     currentPath === '/farmer/orders' && currentStatus === status;
-
-  const isAllProductsActive = () => currentPath === '/farmer/products';
-
-  const isAddProductActive = () => currentPath === '/farmer/products/add';
 
   return (
     <aside className="dashboard-sidebar">
@@ -63,59 +60,57 @@ const FarmerSidebar = () => {
         </div>
 
         {/* Products */}
-        
-<div className="sidebar-section">
-  <button
-    type="button"
-    className={`sidebar-section-header ${
-      currentPath.startsWith('/farmer/products') ? 'active' : ''
-    }`}
-    onClick={() => toggleSection('products')}
-  >
-    <span className="sidebar-section-label">
-      <i className="fas fa-box"></i> Products
-    </span>
-    <i
-      className={`fas fa-chevron-${
-        expanded.products ? 'down' : 'right'
-      } sidebar-chevron`}
-    ></i>
-  </button>
+        <div className="sidebar-section">
+          <button
+            type="button"
+            className={`sidebar-section-header ${
+              currentPath.startsWith('/farmer/products') ? 'active' : ''
+            }`}
+            onClick={() => toggleSection('products')}
+          >
+            <span className="sidebar-section-label">
+              <i className="fas fa-box"></i> Products
+            </span>
+            <i
+              className={`fas fa-chevron-${
+                expanded.products ? 'down' : 'right'
+              } sidebar-chevron`}
+            ></i>
+          </button>
 
-  {expanded.products && (
-    <div className="sidebar-submenu">
-      <NavLink
-        to="/farmer/products"
-        end
-        className={() =>
-          `sidebar-link sidebar-sublink sidebar-sublink-plain ${
-            currentPath === '/farmer/products' && !currentSearch.get('view')
-              ? 'active'
-              : ''
-          }`
-        }
-      >
-        All Products
-      </NavLink>
+          {expanded.products && (
+            <div className="sidebar-submenu">
+              <NavLink
+                to="/farmer/products"
+                end
+                className={() =>
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    currentPath === '/farmer/products' &&
+                    !currentSearch.get('view')
+                      ? 'active'
+                      : ''
+                  }`
+                }
+              >
+                All Products
+              </NavLink>
 
-      <NavLink
-        to="/farmer/products?view=add"
-        className={() =>
-          `sidebar-link sidebar-sublink sidebar-sublink-plain ${
-            currentPath === '/farmer/products' &&
-            currentSearch.get('view') === 'add'
-              ? 'active'
-              : ''
-          }`
-        }
-      >
-        Add Product
-      </NavLink>
-
-  
-    </div>
-  )}
-</div>
+              <NavLink
+                to="/farmer/products?view=add"
+                className={() =>
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    currentPath === '/farmer/products' &&
+                    currentSearch.get('view') === 'add'
+                      ? 'active'
+                      : ''
+                  }`
+                }
+              >
+                Add Product
+              </NavLink>
+            </div>
+          )}
+        </div>
 
         {/* Orders */}
         <div className="sidebar-section">
@@ -149,7 +144,6 @@ const FarmerSidebar = () => {
               >
                 All Orders
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=placed"
                 className={() =>
@@ -160,7 +154,6 @@ const FarmerSidebar = () => {
               >
                 Pending
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=accepted"
                 className={() =>
@@ -171,7 +164,6 @@ const FarmerSidebar = () => {
               >
                 Accepted
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=ready_for_pickup"
                 className={() =>
@@ -182,7 +174,6 @@ const FarmerSidebar = () => {
               >
                 Ready
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=completed"
                 className={() =>
@@ -193,7 +184,6 @@ const FarmerSidebar = () => {
               >
                 Completed
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=cancelled"
                 className={() =>

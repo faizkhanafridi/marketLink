@@ -53,6 +53,7 @@ import "./App.css";
 import NotFoundPage from "./pages/public/NotFoundPage";
 import AdminProducts from "./pages/admin/AdminProducts";
 import FarmerSales from "./pages/farmer/FarmerSales";
+import ChatBot from "./components/customer/ChatBot";
 
 function App() {
   return (
@@ -249,6 +250,7 @@ function App() {
                 />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
+        <ChatBot />
 
               <FlyToCartLayer />
 

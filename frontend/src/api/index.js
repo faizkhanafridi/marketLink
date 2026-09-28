@@ -7,4 +7,6 @@ export { reviewApi } from './reviewApi';
 export { favoriteApi } from './favoriteApi';
 export { adminApi } from './adminApi';
 export { default as axiosInstance } from './axiosConfig';
-export { categoryApi } from './categoryApi';   // ← ADD THIS
+export { categoryApi } from './categoryApi';   
+export { customerApi } from './customerApi';   
+export { chatbotApi } from './chatbotApi';     

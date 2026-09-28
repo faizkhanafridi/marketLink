@@ -14,16 +14,14 @@ const AdminSidebar = () => {
     return location.pathname.startsWith(path);
   };
 
+  //  All sections expanded by default
   const [expanded, setExpanded] = useState({
-    users: location.pathname.includes("/admin/users"),
-    catalog:
-      location.pathname.includes("/admin/categories") ||
-      location.pathname.includes("/admin/products") ||
-      location.pathname.includes("/admin/units"),
-    orders: location.pathname.includes("/admin/orders"),
-    reviews: location.pathname.includes("/admin/reviews"),
-    reports: location.pathname.includes("/admin/reports"),
-    settings: location.pathname.includes("/admin/settings"),
+    users: true,
+    catalog: true,
+    orders: true,
+    reviews: true,
+    reports: true,
+    settings: true,
   });
 
   const toggleSection = (key) => {
@@ -84,7 +82,6 @@ const AdminSidebar = () => {
               >
                 Pending Approvals
               </Link>
-   
             </div>
           )}
         </div>

@@ -20,9 +20,10 @@ const CustomerSidebar = () => {
   const currentStatus = currentSearch.get("status");
   const currentTab = currentSearch.get("tab");
 
+  // ALL sections expanded by default
   const [expanded, setExpanded] = useState({
-    orders: currentPath.startsWith("/customer/orders"),
-    favorites: currentPath.startsWith("/customer/favorites"),
+    orders: true,
+    favorites: true,
   });
 
   const toggleSection = (key) => {
@@ -93,7 +94,6 @@ const CustomerSidebar = () => {
               >
                 All Orders
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=placed"
                 className={() =>
@@ -104,7 +104,6 @@ const CustomerSidebar = () => {
               >
                 Placed
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=accepted"
                 className={() =>
@@ -115,7 +114,6 @@ const CustomerSidebar = () => {
               >
                 Accepted
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=ready_for_pickup"
                 className={() =>
@@ -126,7 +124,6 @@ const CustomerSidebar = () => {
               >
                 Ready
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=completed"
                 className={() =>
@@ -137,7 +134,6 @@ const CustomerSidebar = () => {
               >
                 Completed
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=cancelled"
                 className={() =>
@@ -212,7 +208,6 @@ const CustomerSidebar = () => {
               >
                 All Favorites
               </NavLink>
-
               <NavLink
                 to="/customer/favorites?tab=products"
                 className={() =>
@@ -223,7 +218,6 @@ const CustomerSidebar = () => {
               >
                 Products
               </NavLink>
-
               <NavLink
                 to="/customer/favorites?tab=farmers"
                 className={() =>
