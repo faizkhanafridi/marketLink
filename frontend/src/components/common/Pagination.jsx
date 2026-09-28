@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
@@ -16,50 +17,167 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     pages.push(i);
   }
 
+  // ==================== ANIMATION VARIANTS ====================
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.06,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const btnVariants = {
+    hidden: { opacity: 0, scale: 0.6, y: 10 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        type: 'spring',
+        stiffness: 260,
+        damping: 18,
+      },
+    },
+  };
+
+  const ellipsisVariants = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.3 },
+    },
+  };
+
   return (
-    <div className="pagination-wrapper">
-      <button
+    <motion.div
+      className="pagination-wrapper"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={containerVariants}
+    >
+      {/* Previous */}
+      <motion.button
         className="pagination-btn"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        variants={btnVariants}
+        whileHover={currentPage !== 1 ? { scale: 1.06, y: -2 } : {}}
+        whileTap={currentPage !== 1 ? { scale: 0.94 } : {}}
       >
-        <i className="fas fa-chevron-left"></i> Previous
-      </button>
+        <motion.i
+          className="fas fa-chevron-left"
+          whileHover={{ x: -3 }}
+          transition={{ duration: 0.2 }}
+        />{' '}
+        Previous
+      </motion.button>
 
-      {start > 1 && (
-        <>
-          <button className="pagination-btn" onClick={() => onPageChange(1)}>1</button>
-          {start > 2 && <span className="pagination-ellipsis">...</span>}
-        </>
-      )}
+      {/* First page shortcut */}
+      <AnimatePresence>
+        {start > 1 && (
+          <>
+            <motion.button
+              className="pagination-btn"
+              onClick={() => onPageChange(1)}
+              variants={btnVariants}
+              whileHover={{ scale: 1.08, y: -2 }}
+              whileTap={{ scale: 0.94 }}
+            >
+              1
+            </motion.button>
+            {start > 2 && (
+              <motion.span
+                className="pagination-ellipsis"
+                variants={ellipsisVariants}
+              >
+                ...
+              </motion.span>
+            )}
+          </>
+        )}
+      </AnimatePresence>
 
-      {pages.map((page) => (
-        <button
-          key={page}
-          className={`pagination-btn ${page === currentPage ? 'active' : ''}`}
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </button>
-      ))}
+      {/* Page numbers */}
+      {pages.map((page) => {
+        const isActive = page === currentPage;
+        return (
+          <motion.button
+            key={page}
+            className={`pagination-btn ${isActive ? 'active' : ''}`}
+            onClick={() => onPageChange(page)}
+            variants={btnVariants}
+            whileHover={!isActive ? { scale: 1.08, y: -2 } : { scale: 1.05 }}
+            whileTap={{ scale: 0.94 }}
+            animate={
+              isActive
+                ? {
+                    scale: [1, 1.08, 1],
+                    transition: {
+                      duration: 0.4,
+                      ease: 'easeOut',
+                    },
+                  }
+                : {}
+            }
+          >
+            {page}
+          </motion.button>
+        );
+      })}
 
-      {end < totalPages && (
-        <>
-          {end < totalPages - 1 && <span className="pagination-ellipsis">...</span>}
-          <button className="pagination-btn" onClick={() => onPageChange(totalPages)}>
-            {totalPages}
-          </button>
-        </>
-      )}
+      {/* Last page shortcut */}
+      <AnimatePresence>
+        {end < totalPages && (
+          <>
+            {end < totalPages - 1 && (
+              <motion.span
+                className="pagination-ellipsis"
+                variants={ellipsisVariants}
+              >
+                ...
+              </motion.span>
+            )}
+            <motion.button
+              className="pagination-btn"
+              onClick={() => onPageChange(totalPages)}
+              variants={btnVariants}
+              whileHover={{ scale: 1.08, y: -2 }}
+              whileTap={{ scale: 0.94 }}
+            >
+              {totalPages}
+            </motion.button>
+          </>
+        )}
+      </AnimatePresence>
 
-      <button
+      {/* Next */}
+      <motion.button
         className="pagination-btn"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        variants={btnVariants}
+        whileHover={
+          currentPage !== totalPages ? { scale: 1.06, y: -2 } : {}
+        }
+        whileTap={currentPage !== totalPages ? { scale: 0.94 } : {}}
       >
-        Next <i className="fas fa-chevron-right"></i>
-      </button>
-    </div>
+        Next{' '}
+        <motion.i
+          className="fas fa-chevron-right"
+          whileHover={{ x: 3 }}
+          transition={{ duration: 0.2 }}
+        />
+      </motion.button>
+    </motion.div>
   );
 };
 

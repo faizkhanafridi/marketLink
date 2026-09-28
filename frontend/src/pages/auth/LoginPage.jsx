@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail,
   Lock,
@@ -54,34 +55,108 @@ const LoginPage = () => {
     }
   };
 
+  // ==================== ANIMATION VARIANTS ====================
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        delay: i * 0.1,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    }),
+  };
+
+  const stagger = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.15 },
+    },
+  };
+
+  const slideLeft = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const slideRight = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const featureItem = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        delay: i * 0.12,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    }),
+  };
+
   return (
     <div className="auth-page">
       <Navbar />
 
       <div className="auth-shell">
-        <div className="auth-panel auth-panel-form">
-
-          <div className="auth-head">
-            <span className="auth-eyebrow">Welcome Back</span>
-            <h1 className="auth-heading">
+        {/* ---------- LEFT PANEL: Form ---------- */}
+        <motion.div
+          className="auth-panel auth-panel-form"
+          initial="hidden"
+          animate="visible"
+          variants={slideLeft}
+        >
+          <motion.div
+            className="auth-head"
+            initial="hidden"
+            animate="visible"
+            variants={stagger}
+          >
+            <motion.span variants={fadeUp} className="auth-eyebrow">
+              Welcome Back
+            </motion.span>
+            <motion.h1 variants={fadeUp} className="auth-heading">
               Sign in to your
               <span className="auth-heading-accent"> MarketLink </span>
               account
-            </h1>
-            <p className="auth-lede">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="auth-lede">
               Pick up right where you left off — fresh produce is waiting.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
-
-            <div className="auth-field">
+          <motion.form
+            onSubmit={handleSubmit}
+            className="auth-form"
+            initial="hidden"
+            animate="visible"
+            variants={stagger}
+          >
+            {/* Email */}
+            <motion.div className="auth-field" variants={fadeUp}>
               <label className="auth-label" htmlFor="login-email">
                 Email Address
               </label>
-              <div className="auth-input-wrap">
+              <motion.div
+                className="auth-input-wrap"
+                whileFocus={{ scale: 1.01 }}
+              >
                 <Mail size={16} className="auth-input-icon" />
-                <input
+                <motion.input
                   id="login-email"
                   type="email"
                   name="email"
@@ -91,22 +166,32 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="email"
+                  whileFocus={{
+                    scale: 1.01,
+                    transition: { duration: 0.2 },
+                  }}
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="auth-field">
+            {/* Password */}
+            <motion.div className="auth-field" variants={fadeUp}>
               <div className="auth-label-row">
                 <label className="auth-label" htmlFor="login-password">
                   Password
                 </label>
-                <Link to="/forgot-password" className="auth-label-link">
-                  Forgot?
-                </Link>
+                <motion.div whileHover={{ x: 3 }} transition={{ duration: 0.2 }}>
+                  <Link to="/forgot-password" className="auth-label-link">
+                    Forgot?
+                  </Link>
+                </motion.div>
               </div>
-              <div className="auth-input-wrap">
+              <motion.div
+                className="auth-input-wrap"
+                whileFocus={{ scale: 1.01 }}
+              >
                 <Lock size={16} className="auth-input-icon" />
-                <input
+                <motion.input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -116,89 +201,206 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
+                  whileFocus={{
+                    scale: 1.01,
+                    transition: { duration: 0.2 },
+                  }}
                 />
-                <button
+                <motion.button
                   type="button"
                   className="auth-input-action"
                   onClick={() => setShowPassword((s) => !s)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={
+                    showPassword ? 'Hide password' : 'Show password'
+                  }
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
+                  <AnimatePresence mode="wait" initial={false}>
+                    {showPassword ? (
+                      <motion.span
+                        key="hide"
+                        initial={{ opacity: 0, rotate: -90 }}
+                        animate={{ opacity: 1, rotate: 0 }}
+                        exit={{ opacity: 0, rotate: 90 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ display: 'inline-flex' }}
+                      >
+                        <EyeOff size={16} />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="show"
+                        initial={{ opacity: 0, rotate: 90 }}
+                        animate={{ opacity: 1, rotate: 0 }}
+                        exit={{ opacity: 0, rotate: -90 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ display: 'inline-flex' }}
+                      >
+                        <Eye size={16} />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </motion.div>
+            </motion.div>
 
-            <button
+            {/* Submit */}
+            <motion.button
               type="submit"
               className="auth-submit"
               disabled={loading}
+              variants={fadeUp}
+              whileHover={!loading ? { scale: 1.03, y: -3 } : {}}
+              whileTap={!loading ? { scale: 0.97 } : {}}
+              transition={{ duration: 0.2 }}
             >
               {loading ? (
-                'Signing in...'
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                  style={{ display: 'inline-flex' }}
+                >
+                  <ArrowRight size={16} />
+                </motion.span>
               ) : (
                 <>
                   Sign In
-                  <ArrowRight size={16} />
+                  <motion.span
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ display: 'inline-flex' }}
+                  >
+                    <ArrowRight size={16} />
+                  </motion.span>
                 </>
               )}
-            </button>
+              {loading && 'Signing in...'}
+            </motion.button>
+          </motion.form>
 
-          </form>
-
-          <div className="auth-foot">
-            <p>
+          {/* Footer */}
+          <motion.div
+            className="auth-foot"
+            initial="hidden"
+            animate="visible"
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp}>
               New to MarketLink?{' '}
               <Link to="/register" className="auth-foot-link">
                 Create an account
               </Link>
-            </p>
-            <p>
+            </motion.p>
+            <motion.p variants={fadeUp}>
               Selling produce?{' '}
               <Link to="/register/farmer" className="auth-foot-link">
                 Register as a farmer
               </Link>
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
+        </motion.div>
 
-        </div>
-
-        {/* Right panel */}
-        <aside className="auth-panel auth-panel-aside">
+        {/* ---------- RIGHT PANEL: Aside ---------- */}
+        <motion.aside
+          className="auth-panel auth-panel-aside"
+          initial="hidden"
+          animate="visible"
+          variants={slideRight}
+        >
           <div className="auth-aside-inner">
+            <motion.div
+              className="auth-aside-icon"
+              initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: 0.3,
+                type: 'spring',
+                stiffness: 200,
+                damping: 15,
+              }}
+              whileHover={{ rotate: -10, scale: 1.1 }}
+            >
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                style={{ display: 'inline-flex' }}
+              >
+                <Leaf size={26} strokeWidth={1.6} />
+              </motion.div>
+            </motion.div>
 
-            <div className="auth-aside-icon">
-              <Leaf size={26} strokeWidth={1.6} />
-            </div>
-
-            <h2 className="auth-aside-title">
+            <motion.h2
+              className="auth-aside-title"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+            >
               Farm Fresh,
               <br />
               Just a Click Away
-            </h2>
+            </motion.h2>
 
-            <p className="auth-aside-text">
+            <motion.p
+              className="auth-aside-text"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+            >
               Join a community of local growers and food lovers. Pre-order
               seasonal produce and pick it up at the market — fresh,
               personal, and fair.
-            </p>
+            </motion.p>
 
-            <ul className="auth-feature-list">
-              <li>
-                <CheckCircle2 size={16} />
-                <span>Browse verified local markets</span>
-              </li>
-              <li>
-                <CheckCircle2 size={16} />
-                <span>Pre-order your weekly basket</span>
-              </li>
-              <li>
-                <CheckCircle2 size={16} />
-                <span>Pay at pickup — zero pre-payment</span>
-              </li>
-            </ul>
-
+            <motion.ul
+              className="auth-feature-list"
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+            >
+              {[
+                'Browse verified local markets',
+                'Pre-order your weekly basket',
+                'Pay at pickup — zero pre-payment',
+              ].map((text, i) => (
+                <motion.li
+                  key={i}
+                  variants={featureItem}
+                  custom={i}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.span
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: 0.8 + i * 0.12,
+                      type: 'spring',
+                      stiffness: 300,
+                      damping: 15,
+                    }}
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    style={{ display: 'inline-flex' }}
+                  >
+                    <CheckCircle2 size={16} />
+                  </motion.span>
+                  <span>{text}</span>
+                </motion.li>
+              ))}
+            </motion.ul>
           </div>
-        </aside>
+        </motion.aside>
       </div>
     </div>
   );

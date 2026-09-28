@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import CustomerSidebar from '../../components/customer/CustomerSidebar';
@@ -7,26 +8,39 @@ import EmptyState from '../../components/common/EmptyState';
 import ProductCard from '../../components/common/ProductCard';
 import FarmerCard from '../../components/common/FarmerCard';
 import { favoriteApi } from '../../api';
+import { toast } from 'react-toastify';
 import '../../styles/dashboard.css';
 
 const FavoritesPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState('products');
+
+  // URL-driven tab — single source of truth
+  const tabFromUrl = searchParams.get('tab');
+  const tab = tabFromUrl === 'farmers' ? 'farmers' : 'products';
+
+  const fetchFavorites = async () => {
+    try {
+      const data = await favoriteApi.getAll();
+      setFavorites(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      toast.error('Failed to load favorites');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const data = await favoriteApi.getAll();
-        setFavorites(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchFavorites();
   }, []);
+
+  const handleTabChange = (nextTab) => {
+    navigate(`/customer/favorites?tab=${nextTab}`);
+  };
 
   const favoriteProducts = favorites.filter((f) => f.product);
   const favoriteFarmers = favorites.filter((f) => f.farmer);
@@ -39,19 +53,27 @@ const FavoritesPage = () => {
         <main className="dashboard-main">
           <div className="dashboard-header">
             <h1 className="dashboard-title">My Favorites</h1>
-            <p className="dashboard-subtitle">Your saved products and farmers</p>
+            <p className="dashboard-subtitle">
+              Your saved products and farmers
+            </p>
           </div>
 
           <div className="filter-tabs">
             <button
-              className={`filter-tab ${tab === 'products' ? 'active' : ''}`}
-              onClick={() => setTab('products')}
+              type="button"
+              className={`filter-tab ${
+                tab === 'products' ? 'active' : ''
+              }`}
+              onClick={() => handleTabChange('products')}
             >
               Products ({favoriteProducts.length})
             </button>
             <button
-              className={`filter-tab ${tab === 'farmers' ? 'active' : ''}`}
-              onClick={() => setTab('farmers')}
+              type="button"
+              className={`filter-tab ${
+                tab === 'farmers' ? 'active' : ''
+              }`}
+              onClick={() => handleTabChange('farmers')}
             >
               Farmers ({favoriteFarmers.length})
             </button>
@@ -66,7 +88,7 @@ const FavoritesPage = () => {
                 title="No Favorite Products"
                 message="Save products you love for quick access."
                 actionText="Browse Products"
-                onAction={() => window.location.href = '/products'}
+                onAction={() => navigate('/products')}
               />
             ) : (
               <div className="products-grid">
@@ -81,7 +103,7 @@ const FavoritesPage = () => {
               title="No Favorite Farmers"
               message="Save farmers you like for quick access."
               actionText="Browse Farmers"
-              onAction={() => window.location.href = '/farmers'}
+              onAction={() => navigate('/farmers')}
             />
           ) : (
             <div className="farmers-grid">
@@ -92,7 +114,7 @@ const FavoritesPage = () => {
           )}
         </main>
       </div>
-    
+      <Footer />
     </div>
   );
 };

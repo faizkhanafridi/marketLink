@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   X,
@@ -12,7 +13,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowDownWideNarrow,
-  ShieldAlert,
 } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import AdminSidebar from '../../components/admin/AdminSidebar';
@@ -30,11 +30,21 @@ const PER_PAGE = 10;
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest'); // newest | oldest | highest | lowest
   const [density, setDensity] = useState('comfortable'); // comfortable | compact
   const [page, setPage] = useState(1);
+
+  // URL is the source of truth for filter
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filter = searchParams.get('type') || 'all';
+
+  // Change filter → update URL
+  const setFilter = (newFilter) => {
+    const params = {};
+    if (newFilter && newFilter !== 'all') params.type = newFilter;
+    setSearchParams(params);
+  };
 
   const fetchReviews = async () => {
     setLoading(true);
@@ -136,7 +146,7 @@ const AdminReviews = () => {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setFilter('all');
+    setSearchParams({}); // clears ?type=...
     setSortBy('newest');
     setPage(1);
   };
@@ -152,7 +162,8 @@ const AdminReviews = () => {
 
           {/* Header */}
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Content Moderation</h1>
+                        <p className="dashboard-subtitle text-dark fw-bold ">Content Reviews</p>
+
             <p className="dashboard-subtitle">
               Review and moderate customer reviews across the platform
             </p>
@@ -413,14 +424,12 @@ const AdminReviews = () => {
                   <div className="ar-page-numbers">
                     {Array.from({ length: totalPages }).map((_, idx) => {
                       const pageNum = idx + 1;
-                      // Show first, last, current, and neighbors
                       const show =
                         pageNum === 1 ||
                         pageNum === totalPages ||
                         Math.abs(pageNum - page) <= 1;
 
                       if (!show) {
-                        // Show ellipsis only once per gap
                         const prevPage = idx;
                         const nextPage = idx + 2;
                         const gapBefore =

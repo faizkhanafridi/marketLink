@@ -1,189 +1,294 @@
-/* card.css */
-/* Product Card - Clean, modern, subtle elevation */
+/* cards.css — MarketLink card styles */
+
+/* ============================================================
+   PRODUCT CARD — compact, self-describing
+   ============================================================ */
+
 .product-card {
-  background: var(--color-white);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--color-border-light);
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #ebe8e2;
+  border-radius: 14px;
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .product-card:hover {
+  border-color: #d9ddd9;
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-border);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
 }
 
-.card-link {
-  text-decoration: none;
-  color: inherit;
+.product-card .card-link {
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  color: inherit;
   flex: 1;
 }
 
+/* ---------- Image (fixed compact height) ---------- */
 .product-image-wrapper {
   position: relative;
-  aspect-ratio: 1;
+  width: 100%;
+  height: 170px;
   overflow: hidden;
-  background: var(--color-cream);
+  background: #f5f4f1;
+  flex-shrink: 0;
 }
 
 .product-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
+  object-fit: contain;
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover .product-image {
   transform: scale(1.05);
 }
 
+/* Badges */
 .sold-out-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 5px 11px;
-  background: var(--color-danger);
-  color: var(--color-white);
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  background: rgba(28, 25, 23, 0.85);
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-radius: 4px;
-  line-height: 1.4;
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .low-stock-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 5px 11px;
-  background: var(--color-accent);
-  color: var(--color-white);
+  bottom: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  background: rgba(196, 122, 10, 0.95);
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
-  border-radius: 4px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  line-height: 1.4;
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
+/* ---------- Info block ---------- */
 .product-info {
-  padding: 18px;
-  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 9px;
+  padding: 14px 16px 16px;
+  flex: 1;
+}
+
+/* Category + rating row */
+.product-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 18px;
 }
 
 .product-category {
   display: inline-block;
+  padding: 3px 8px;
+  background: #eef4e8;
+  color: #194d26;
+  border-radius: 5px;
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-primary);
-  margin-bottom: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
 }
 
+.product-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1c1917;
+  white-space: nowrap;
+}
+
+/* Title */
 .product-name {
+  margin: 0;
+  font-family: var(--font-heading, "Manrope", sans-serif);
   font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--color-black);
-  line-height: 1.4;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: #1c1917;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
 }
 
+.product-card:hover .product-name {
+  color: #194d26;
+}
+
+/* Farmer + market */
 .product-farmer {
-  font-size: 13px;
-  color: var(--color-text-light);
-  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  margin: 0;
+  font-size: 12px;
+  color: #78716c;
+  line-height: 1.3;
+  min-width: 0;
 }
 
-.product-rating {
-  margin-bottom: 12px;
+.product-farmer svg {
+  flex-shrink: 0;
+  color: #a8a29e;
 }
 
-.product-footer {
+.pf-name {
+  font-weight: 600;
+  color: #57534e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-dot {
+  color: #d6d3d1;
+}
+
+.pf-market {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Price + stock */
+.product-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   margin-top: auto;
+  padding-top: 4px;
 }
 
 .product-price {
   display: flex;
   align-items: baseline;
   gap: 4px;
+  min-width: 0;
 }
 
 .price-amount {
-  font-family: var(--font-heading);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-primary-dark);
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: 17px;
+  font-weight: 800;
+  color: #194d26;
   letter-spacing: -0.02em;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .price-unit {
-  font-size: 13px;
-  color: var(--color-text-lighter);
+  font-size: 11.5px;
+  color: #a8a29e;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
+.product-stock {
+  font-size: 11px;
+  color: #78716c;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Add to cart / login ---------- */
 .add-to-cart-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 13px;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-  font-size: 14px;
+  gap: 7px;
+  width: calc(100% - 32px);
+  margin: 0 16px 16px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #194d26;
+  border-radius: 9px;
+  background: #194d26;
+  color: #ffffff;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 12.5px;
   font-weight: 600;
-  transition: background var(--transition-fast);
-  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
 }
 
-.add-to-cart-btn:hover:not(.disabled) {
-  background: var(--color-primary-dark);
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #143e1f;
+  border-color: #143e1f;
+  box-shadow: 0 8px 16px -6px rgba(25, 77, 38, 0.35);
 }
 
-.add-to-cart-btn.disabled {
-  background: var(--color-cream-dark);
-  color: var(--color-text-lighter);
+.add-to-cart-btn:disabled {
+  background: #f5f5f4;
+  border-color: #e7e5e4;
+  color: #a8a29e;
   cursor: not-allowed;
 }
 
-/* Farmer Card */
+/* ============================================================
+   FARMER CARD
+   ============================================================ */
+
 .farmer-card {
   display: flex;
   flex-direction: column;
-  background: var(--color-white);
-  border-radius: var(--radius-md);
+  background: var(--color-white, #ffffff);
+  border-radius: var(--radius-md, 14px);
   padding: 26px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-light);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--color-border-light, #ebe8e2);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
   text-decoration: none;
   color: inherit;
 }
 
 .farmer-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-border);
+  box-shadow: var(--shadow-lg, 0 16px 32px rgba(0, 0, 0, 0.08));
+  border-color: var(--color-border, #d9ddd9);
 }
 
 .farmer-card-header {
@@ -197,13 +302,13 @@
   width: 56px;
   height: 56px;
   flex-shrink: 0;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border-radius: var(--radius-sm);
+  background: var(--color-primary, #194d26);
+  color: var(--color-white, #ffffff);
+  border-radius: var(--radius-sm, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
+  font-family: var(--font-heading, "Manrope", sans-serif);
   font-size: 22px;
   font-weight: 700;
 }
@@ -211,14 +316,14 @@
 .farmer-stall-name {
   font-size: 17px;
   margin-bottom: 3px;
-  color: var(--color-black);
+  color: var(--color-black, #1c1917);
   letter-spacing: -0.01em;
   font-weight: 700;
 }
 
 .farmer-contact {
   font-size: 13px;
-  color: var(--color-text-lighter);
+  color: var(--color-text-lighter, #a8a29e);
 }
 
 .farmer-card-body {
@@ -227,7 +332,7 @@
 
 .farmer-description {
   font-size: 14px;
-  color: var(--color-text-light);
+  color: var(--color-text-light, #78716c);
   line-height: 1.65;
   margin-bottom: 16px;
   display: -webkit-box;
@@ -247,11 +352,11 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--color-text-light, #78716c);
 }
 
 .meta-item i {
-  color: var(--color-primary-light);
+  color: var(--color-primary-light, #4a7c2e);
   width: 14px;
   font-size: 13px;
   flex-shrink: 0;
@@ -260,7 +365,7 @@
 .farmer-card-footer {
   margin-top: 20px;
   padding-top: 18px;
-  border-top: 1px solid var(--color-border-light);
+  border-top: 1px solid var(--color-border-light, #ebe8e2);
 }
 
 .view-profile-btn {
@@ -269,42 +374,48 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-primary);
-  transition: gap var(--transition-fast);
+  color: var(--color-primary, #194d26);
+  transition: gap 0.15s ease;
 }
 
 .farmer-card:hover .view-profile-btn {
   gap: 12px;
 }
 
-/* Market Card */
+/* ============================================================
+   MARKET CARD
+   ============================================================ */
+
 .market-card {
   display: flex;
   align-items: center;
   gap: 20px;
-  background: var(--color-white);
-  border-radius: var(--radius-md);
+  background: var(--color-white, #ffffff);
+  border-radius: var(--radius-md, 14px);
   padding: 24px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-light);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--color-border-light, #ebe8e2);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
   text-decoration: none;
   color: inherit;
 }
 
 .market-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-lighter);
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+  border-color: var(--color-primary-lighter, #dfe8dc);
 }
 
 .market-card-icon {
   width: 58px;
   height: 58px;
   flex-shrink: 0;
-  background: var(--color-primary-lighter);
-  color: var(--color-primary);
-  border-radius: var(--radius-sm);
+  background: var(--color-primary-lighter, #eef4e8);
+  color: var(--color-primary, #194d26);
+  border-radius: var(--radius-sm, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,7 +430,7 @@
 .market-name {
   font-size: 17px;
   margin-bottom: 10px;
-  color: var(--color-black);
+  color: var(--color-black, #1c1917);
   letter-spacing: -0.01em;
   font-weight: 700;
 }
@@ -329,31 +440,36 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--color-text-light);
+  color: var(--color-text-light, #78716c);
   margin-bottom: 5px;
   line-height: 1.5;
 }
 
 .market-card-content i {
-  color: var(--color-primary-light);
+  color: var(--color-primary-light, #4a7c2e);
   width: 14px;
   font-size: 13px;
   flex-shrink: 0;
 }
 
 .market-card-arrow {
-  color: var(--color-text-lighter);
-  transition: transform var(--transition-fast), color var(--transition-fast);
+  color: var(--color-text-lighter, #a8a29e);
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
   font-size: 14px;
   flex-shrink: 0;
 }
 
 .market-card:hover .market-card-arrow {
   transform: translateX(4px);
-  color: var(--color-primary);
+  color: var(--color-primary, #194d26);
 }
 
-/* Rating Stars */
+/* ============================================================
+   RATING STARS
+   ============================================================ */
+
 .rating-stars {
   display: inline-flex;
   gap: 2px;
@@ -374,7 +490,9 @@
 
 .star.interactive {
   cursor: pointer;
-  transition: transform var(--transition-fast), color var(--transition-fast);
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
 }
 
 .star.interactive:hover {
@@ -382,7 +500,10 @@
   color: #d4a017;
 }
 
-/* Map marker */
+/* ============================================================
+   MAP MARKER
+   ============================================================ */
+
 .custom-map-marker {
   background: transparent;
   border: none;
@@ -391,7 +512,7 @@
 .marker-pin {
   width: 30px;
   height: 30px;
-  background: var(--color-primary);
+  background: var(--color-primary, #194d26);
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   display: flex;
@@ -402,6 +523,87 @@
 
 .marker-pin i {
   transform: rotate(45deg);
-  color: var(--color-white);
+  color: var(--color-white, #ffffff);
   font-size: 13px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .product-image-wrapper {
+    height: 150px;
+  }
+
+  .product-info {
+    padding: 12px 14px 14px;
+    gap: 8px;
+  }
+
+  .product-name {
+    font-size: 14px;
+  }
+
+  .price-amount {
+    font-size: 16px;
+  }
+
+  .add-to-cart-btn {
+    width: calc(100% - 28px);
+    margin: 0 14px 14px;
+  }
+}
+
+
+/* ============================================
+   Farmer card favorite button
+   ============================================ */
+.farmer-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.farmer-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.farmer-card-fav {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-text-lighter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.farmer-card-fav:hover:not(:disabled) {
+  border-color: #c0392b;
+  color: #c0392b;
+  transform: scale(1.05);
+}
+
+.farmer-card-fav.active {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #ffffff;
+}
+
+.farmer-card-fav.active:hover:not(:disabled) {
+  background: #a93226;
+  border-color: #a93226;
+}
+
+.farmer-card-fav:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

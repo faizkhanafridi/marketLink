@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import FarmerSidebar from '../../components/farmer/FarmerSidebar';
@@ -9,10 +10,34 @@ import { formatCurrency, formatDate } from '../../utils/formatters';
 import { toast } from 'react-toastify';
 import '../../styles/dashboard.css';
 
+const STATUS_TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'placed', label: 'New' },
+  { key: 'accepted', label: 'Accepted' },
+  { key: 'ready_for_pickup', label: 'Ready' },
+  { key: 'completed', label: 'Completed' },
+  { key: 'cancelled', label: 'Cancelled' },
+];
+
+const STATUS_LABEL = {
+  placed: 'New',
+  accepted: 'Accepted',
+  ready_for_pickup: 'Ready for pickup',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+  declined: 'Declined',
+};
+
 const FarmerOrders = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+
+  // Derive the filter from the URL — single source of truth
+  const statusFromUrl = searchParams.get('status');
+  const filter = statusFromUrl || 'all';
 
   const fetchOrders = async () => {
     try {
@@ -20,6 +45,7 @@ const FarmerOrders = () => {
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      toast.error('Failed to load orders');
     } finally {
       setLoading(false);
     }
@@ -32,25 +58,37 @@ const FarmerOrders = () => {
   const handleStatusUpdate = async (orderId, status) => {
     try {
       await orderApi.updateStatus(orderId, status);
-      toast.success(`Order marked as ${status.replace(/_/g, ' ')}`);
+      toast.success(`Order marked as ${STATUS_LABEL[status] || status}`);
       fetchOrders();
     } catch (error) {
       toast.error('Failed to update order');
     }
   };
 
-  const filteredOrders = filter === 'all'
-    ? orders
-    : orders.filter((o) => o.order_status === filter);
+  // Clicking a tab updates the URL, which re-derives `filter` above
+  const handleFilterChange = (key) => {
+    if (key === 'all') {
+      navigate('/farmer/orders');
+    } else {
+      navigate(`/farmer/orders?status=${key}`);
+    }
+  };
 
-  const statusTabs = [
-    { key: 'all', label: 'All' },
-    { key: 'placed', label: 'New' },
-    { key: 'accepted', label: 'Accepted' },
-    { key: 'ready_for_pickup', label: 'Ready' },
-    { key: 'completed', label: 'Completed' },
-    { key: 'cancelled', label: 'Cancelled' },
-  ];
+  const counts = useMemo(() => {
+    const map = { all: orders.length };
+    orders.forEach((o) => {
+      map[o.order_status] = (map[o.order_status] || 0) + 1;
+    });
+    return map;
+  }, [orders]);
+
+  const filteredOrders = useMemo(
+    () =>
+      filter === 'all'
+        ? orders
+        : orders.filter((o) => o.order_status === filter),
+    [orders, filter]
+  );
 
   return (
     <div className="dashboard-page">
@@ -58,113 +96,272 @@ const FarmerOrders = () => {
       <div className="dashboard-layout">
         <FarmerSidebar />
         <main className="dashboard-main">
+
           <div className="dashboard-header">
             <h1 className="dashboard-title">Orders</h1>
-            <p className="dashboard-subtitle">Manage incoming pre-orders</p>
+            <p className="dashboard-subtitle">
+              Manage incoming pre-orders from customers
+            </p>
           </div>
 
+          {/* KPI strip */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-icon blue">
+                <i className="fas fa-shopping-bag"></i>
+              </div>
+              <div className="stat-content">
+                <span className="stat-value">{counts.all || 0}</span>
+                <span className="stat-label">Total Orders</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon orange">
+                <i className="fas fa-hourglass-half"></i>
+              </div>
+              <div className="stat-content">
+                <span className="stat-value">{counts.placed || 0}</span>
+                <span className="stat-label">New</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon purple">
+                <i className="fas fa-box-open"></i>
+              </div>
+              <div className="stat-content">
+                <span className="stat-value">
+                  {counts.ready_for_pickup || 0}
+                </span>
+                <span className="stat-label">Ready</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon green">
+                <i className="fas fa-check-circle"></i>
+              </div>
+              <div className="stat-content">
+                <span className="stat-value">{counts.completed || 0}</span>
+                <span className="stat-label">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
           <div className="filter-tabs">
-            {statusTabs.map((tab) => (
-              <button
-                key={tab.key}
-                className={`filter-tab ${filter === tab.key ? 'active' : ''}`}
-                onClick={() => setFilter(tab.key)}
-              >
-                {tab.label}
-              </button>
-            ))}
+            {STATUS_TABS.map((tab) => {
+              const count = counts[tab.key] || 0;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={`filter-tab ${
+                    filter === tab.key ? 'active' : ''
+                  }`}
+                  onClick={() => handleFilterChange(tab.key)}
+                >
+                  {tab.label}
+                  <span className="filter-tab-count">{count}</span>
+                </button>
+              );
+            })}
           </div>
 
+          {/* List */}
           {loading ? (
             <Loader message="Loading orders..." />
           ) : filteredOrders.length === 0 ? (
             <EmptyState
               icon="shopping-bag"
-              title="No Orders Found"
-              message="No orders match the selected filter."
+              title={
+                filter === 'all' ? 'No Orders Yet' : 'No Orders Found'
+              }
+              message={
+                filter === 'all'
+                  ? 'Orders will appear here when customers place them.'
+                  : 'Try a different filter.'
+              }
+              actionText={filter !== 'all' ? 'View All' : undefined}
+              onAction={
+                filter !== 'all' ? () => handleFilterChange('all') : undefined
+              }
             />
           ) : (
-            <div className="orders-list">
-              {filteredOrders.map((order) => (
-                <div key={order.order_id} className="order-card farmer-order-card">
-                  <div className="order-header">
-                    <div>
-                      <span className="order-id">Order #{order.order_id}</span>
-                      <span className="order-date">{formatDate(order.created_at)}</span>
-                    </div>
-                    <span className={`status-badge status-${order.order_status}`}>
-                      {order.order_status?.replace(/_/g, ' ')}
-                    </span>
-                  </div>
+            <div className="fo-list">
+              {filteredOrders.map((order) => {
+                const statusKey = order.order_status || 'placed';
+                const itemsCount =
+                  order.items?.reduce(
+                    (sum, it) => sum + (it.quantity || 0),
+                    0
+                  ) || 0;
 
-                  <div className="order-customer-info">
-                    <i className="fas fa-user"></i>
-                    <strong>{order.customer?.username}</strong>
-                    {order.customer?.contact_number && (
-                      <span className="customer-contact">
-                        <i className="fas fa-phone"></i> {order.customer.contact_number}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="order-body">
-                    <div className="order-items-preview">
-                      {order.items?.map((item, idx) => (
-                        <span key={idx} className="item-preview">
-                          {item.quantity}x {item.product?.name}
+                return (
+                  <article key={order.order_id} className="fo-card">
+                    <div className="fo-head">
+                      <div className="fo-head-left">
+                        <span className="fo-id">
+                          #{String(order.order_id).padStart(4, '0')}
                         </span>
-                      ))}
-                    </div>
-                    <div className="order-meta-row">
-                      <span><i className="fas fa-calendar"></i> {order.pickup_date}</span>
-                      <span><i className="fas fa-clock"></i> {order.pickup_slot}</span>
-                      <span className="order-total">
-                        Total: <strong>{formatCurrency(order.total_amount)}</strong>
+                        <span className="fo-date">
+                          {formatDate(order.created_at)}
+                        </span>
+                      </div>
+                      <span className={`status-badge status-${statusKey}`}>
+                        {STATUS_LABEL[statusKey] || statusKey}
                       </span>
                     </div>
-                    {order.notes && (
-                      <p className="order-notes"><i className="fas fa-sticky-note"></i> {order.notes}</p>
-                    )}
-                  </div>
 
-                  <div className="order-footer">
-                    {order.order_status === 'placed' && (
-                      <div className="order-actions-inline">
-                        <button
-                          className="btn btn-sm btn-primary"
-                          onClick={() => handleStatusUpdate(order.order_id, 'accepted')}
-                        >
-                          Accept
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline"
-                          onClick={() => handleStatusUpdate(order.order_id, 'declined')}
-                        >
-                          Decline
-                        </button>
+                    <div className="fo-info">
+                      <div className="fo-info-item">
+                        <span className="fo-info-icon">
+                          <i className="fas fa-user"></i>
+                        </span>
+                        <div className="fo-info-body">
+                          <span className="fo-info-label">Customer</span>
+                          <span className="fo-info-value">
+                            {order.customer?.username || 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {order.customer?.contact_number && (
+                        <div className="fo-info-item">
+                          <span className="fo-info-icon">
+                            <i className="fas fa-phone"></i>
+                          </span>
+                          <div className="fo-info-body">
+                            <span className="fo-info-label">Contact</span>
+                            <span className="fo-info-value">
+                              {order.customer.contact_number}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {order.pickup_date && (
+                        <div className="fo-info-item">
+                          <span className="fo-info-icon">
+                            <i className="fas fa-calendar"></i>
+                          </span>
+                          <div className="fo-info-body">
+                            <span className="fo-info-label">Pickup</span>
+                            <span className="fo-info-value">
+                              {order.pickup_date}
+                              {order.pickup_slot && ` · ${order.pickup_slot}`}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {itemsCount > 0 && (
+                        <div className="fo-info-item">
+                          <span className="fo-info-icon">
+                            <i className="fas fa-box"></i>
+                          </span>
+                          <div className="fo-info-body">
+                            <span className="fo-info-label">Items</span>
+                            <span className="fo-info-value">
+                              {itemsCount}{' '}
+                              {itemsCount === 1 ? 'item' : 'items'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {order.items?.length > 0 && (
+                      <div className="fo-items">
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="fo-item">
+                            <span className="fo-item-qty">
+                              {item.quantity}×
+                            </span>
+                            <span className="fo-item-name">
+                              {item.product?.name || 'Product'}
+                            </span>
+                            {item.price != null && (
+                              <span className="fo-item-price">
+                                {formatCurrency(item.price * item.quantity)}
+                              </span>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     )}
-                    {order.order_status === 'accepted' && (
-                      <button
-                        className="btn btn-sm btn-primary"
-                        onClick={() => handleStatusUpdate(order.order_id, 'ready_for_pickup')}
-                      >
-                        Mark Ready for Pickup
-                      </button>
+
+                    {order.notes && (
+                      <div className="fo-notes">
+                        <i className="fas fa-sticky-note"></i>
+                        <span>{order.notes}</span>
+                      </div>
                     )}
-                    {order.order_status === 'ready_for_pickup' && (
-                      <button
-                        className="btn btn-sm btn-primary"
-                        onClick={() => handleStatusUpdate(order.order_id, 'completed')}
-                      >
-                        Mark Completed
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+
+                    <div className="fo-foot">
+                      <div className="fo-total">
+                        <span className="fo-total-label">Total</span>
+                        <span className="fo-total-value">
+                          {formatCurrency(order.total_amount)}
+                        </span>
+                      </div>
+
+                      <div className="fo-actions">
+                        {order.order_status === 'placed' && (
+                          <>
+                            <button
+                              type="button"
+                              className="fo-btn fo-btn-ghost"
+                              onClick={() =>
+                                handleStatusUpdate(order.order_id, 'declined')
+                              }
+                            >
+                              Decline
+                            </button>
+                            <button
+                              type="button"
+                              className="fo-btn fo-btn-primary"
+                              onClick={() =>
+                                handleStatusUpdate(order.order_id, 'accepted')
+                              }
+                            >
+                              Accept
+                            </button>
+                          </>
+                        )}
+
+                        {order.order_status === 'accepted' && (
+                          <button
+                            type="button"
+                            className="fo-btn fo-btn-primary"
+                            onClick={() =>
+                              handleStatusUpdate(
+                                order.order_id,
+                                'ready_for_pickup'
+                              )
+                            }
+                          >
+                            Mark Ready for Pickup
+                          </button>
+                        )}
+
+                        {order.order_status === 'ready_for_pickup' && (
+                          <button
+                            type="button"
+                            className="fo-btn fo-btn-primary"
+                            onClick={() =>
+                              handleStatusUpdate(order.order_id, 'completed')
+                            }
+                          >
+                            Mark Completed
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
+
         </main>
       </div>
       <Footer />

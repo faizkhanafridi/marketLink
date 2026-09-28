@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Farmer
     Route::middleware('role:farmer')->group(function () {
         Route::get('/farmer/dashboard', [FarmerController::class, 'dashboard']);
+        Route::get('/analytics', [FarmerController::class, 'analytics']);
         Route::put('/farmer/profile', [FarmerController::class, 'updateProfile']);
 
         Route::post('/products', [ProductController::class, 'store']);
@@ -74,6 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard']);
+                Route::get('/analytics', [AdminController::class, 'analytics']);
+
         Route::get('/users', [AdminController::class, 'users']);
         Route::patch('/users/{id}/approve', [AdminController::class, 'approveFarmer']);
         Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
