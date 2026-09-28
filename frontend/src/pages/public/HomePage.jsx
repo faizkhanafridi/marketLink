@@ -824,7 +824,7 @@ const HomePage = () => {
 
               <motion.p variants={fadeUp} className="farmer-cta-description">
                 Browse this week's seasonal harvest, reserve what you love, and
-                pick up at the market. Zero pre-payment — pay cash at the stall.
+                pick up at the market. Zero pre-payment, pay cash at the stall.
               </motion.p>
 
               <motion.div variants={fadeUp} className="farmer-cta-actions">

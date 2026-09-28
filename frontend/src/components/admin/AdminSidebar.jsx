@@ -84,12 +84,7 @@ const AdminSidebar = () => {
               >
                 Pending Approvals
               </Link>
-              <Link
-                to="/admin/roles"
-                className={`sidebar-link sidebar-sublink sidebar-sublink-plain ${isPathActive("/admin/roles", true) ? "active" : ""}`}
-              >
-                Roles & Permissions
-              </Link>
+   
             </div>
           )}
         </div>

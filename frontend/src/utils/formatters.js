@@ -50,3 +50,18 @@ export const replaceUnderscore = (str) => {
   if (!str) return '';
   return str.replace(/_/g, ' ');
 };
+
+
+export const getImageUrl = (path) => {
+  if (!path) return '/assets/images/default-product.jpg';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('blob:') || path.startsWith('data:')) return path;
+
+  // Base origin from VITE_API_URL (fallback to localhost:8000)
+  const apiUrl =
+    (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) ||
+    'http://localhost:8000/api';
+  const origin = apiUrl.replace(/\/api\/?$/, '');
+
+  return `${origin}${path.startsWith('/') ? '' : '/'}${path}`;
+};

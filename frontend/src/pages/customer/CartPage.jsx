@@ -87,7 +87,7 @@ const CartPage = () => {
             </motion.div>
           </main>
         </div>
-        <Footer />
+        
       </div>
     );
   }
@@ -105,9 +105,8 @@ const CartPage = () => {
             animate="visible"
             variants={stagger}
           >
-            <motion.h1 variants={fadeUp} className="dashboard-title">
-              Shopping Cart
-            </motion.h1>
+                      <p className="dashboard-subtitle text-dark fw-bold ">Shopping Cart</p>
+
             <motion.p variants={fadeUp} className="dashboard-subtitle">
               {cartItems.length} items in your cart
             </motion.p>
@@ -309,7 +308,7 @@ const CartPage = () => {
                 </motion.button>
               </motion.div>
 
-              {/* ✅ Clear Cart Button — NO rotation, sirf hover lift */}
+            
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -329,7 +328,7 @@ const CartPage = () => {
           </div>
         </main>
       </div>
-      <Footer />
+    
     </div>
   );
 };

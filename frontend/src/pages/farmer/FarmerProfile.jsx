@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/common/Navbar';
-import Footer from '../../components/common/Footer';
-import FarmerSidebar from '../../components/farmer/FarmerSidebar';
-import MapView from '../../components/common/MapView';
-import { farmerApi, marketApi } from '../../api';
-import { useAuth } from '../../hooks/useAuth';
-import { toast } from 'react-toastify';
-import '../../styles/dashboard.css';
-import '../../styles/forms.css';
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
+import FarmerSidebar from "../../components/farmer/FarmerSidebar";
+import MapView from "../../components/common/MapView";
+import { farmerApi, marketApi } from "../../api";
+import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-toastify";
+import "../../styles/dashboard.css";
+import "../../styles/forms.css";
+import LocationPicker from "../../components/common/LocationPicker";
 
 const FarmerProfile = () => {
   const { user, updateUser } = useAuth();
   const [markets, setMarkets] = useState([]);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    stall_name: '',
-    contact_person: '',
-    description: '',
-    market_id: '',
-    operating_days: '',
-    pickup_window: '',
-    address: '',
-    latitude: '',
-    longitude: '',
-    order_cutoff_time: '',
+    stall_name: "",
+    contact_person: "",
+    description: "",
+    market_id: "",
+    operating_days: "",
+    pickup_window: "",
+    address: "",
+    latitude: "",
+    longitude: "",
+    order_cutoff_time: "",
   });
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const FarmerProfile = () => {
         const marketsData = await marketApi.getAll();
         setMarkets(Array.isArray(marketsData) ? marketsData : []);
       } catch (error) {
-        console.error('Error fetching markets:', error);
+        console.error("Error fetching markets:", error);
       }
     };
     fetchData();
@@ -42,16 +43,16 @@ const FarmerProfile = () => {
     if (user?.farmer_profile) {
       const p = user.farmer_profile;
       setFormData({
-        stall_name: p.stall_name || '',
-        contact_person: p.contact_person || '',
-        description: p.description || '',
-        market_id: p.market_id || '',
-        operating_days: p.operating_days || '',
-        pickup_window: p.pickup_window || '',
-        address: p.address || '',
-        latitude: p.latitude || '',
-        longitude: p.longitude || '',
-        order_cutoff_time: p.order_cutoff_time || '',
+        stall_name: p.stall_name || "",
+        contact_person: p.contact_person || "",
+        description: p.description || "",
+        market_id: p.market_id || "",
+        operating_days: p.operating_days || "",
+        pickup_window: p.pickup_window || "",
+        address: p.address || "",
+        latitude: p.latitude || "",
+        longitude: p.longitude || "",
+        order_cutoff_time: p.order_cutoff_time || "",
       });
     }
   }, [user]);
@@ -70,14 +71,16 @@ const FarmerProfile = () => {
         latitude: formData.latitude ? parseFloat(formData.latitude) : null,
         longitude: formData.longitude ? parseFloat(formData.longitude) : null,
       });
-      toast.success('Profile updated successfully');
+      toast.success("Profile updated successfully");
       updateUser({ ...user, farmer_profile: res.profile });
     } catch (error) {
       const errors = error.response?.data?.errors;
       if (errors) {
-        Object.values(errors).flat().forEach((msg) => toast.error(msg));
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
       } else {
-        toast.error('Failed to update profile');
+        toast.error("Failed to update profile");
       }
     } finally {
       setSaving(false);
@@ -93,8 +96,11 @@ const FarmerProfile = () => {
         <FarmerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Farm Profile</h1>
-            <p className="dashboard-subtitle">Manage your farm details and location</p>
+            <p className="dashboard-subtitle text-dark fw-bold ">My Profile</p>
+
+            <p className="dashboard-subtitle">
+              Manage your farm details and location
+            </p>
           </div>
 
           <div className="profile-layout-farmer">
@@ -148,7 +154,9 @@ const FarmerProfile = () => {
                   >
                     <option value="">Select market</option>
                     {markets.map((m) => (
-                      <option key={m.market_id} value={m.market_id}>{m.market_name}</option>
+                      <option key={m.market_id} value={m.market_id}>
+                        {m.market_name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -200,36 +208,29 @@ const FarmerProfile = () => {
                   className="form-control"
                   value={formData.address}
                   onChange={handleChange}
+                  placeholder="Street, area, city"
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Latitude</label>
-                  <input
-                    type="number"
-                    step="any"
-                    name="latitude"
-                    className="form-control"
-                    value={formData.latitude}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Longitude</label>
-                  <input
-                    type="number"
-                    step="any"
-                    name="longitude"
-                    className="form-control"
-                    value={formData.longitude}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div className="form-group">
+                <label className="form-label">Pick Location on Map</label>
+                <LocationPicker
+                  latitude={formData.latitude}
+                  longitude={formData.longitude}
+                  address={formData.address}
+                  onChange={(updates) =>
+                    setFormData((prev) => ({ ...prev, ...updates }))
+                  }
+                  height={340}
+                />
               </div>
 
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? 'Saving...' : 'Save Profile'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Profile"}
               </button>
             </form>
 
@@ -254,7 +255,6 @@ const FarmerProfile = () => {
           </div>
         </main>
       </div>
-      <Footer />
     </div>
   );
 };

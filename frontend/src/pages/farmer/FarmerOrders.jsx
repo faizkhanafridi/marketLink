@@ -98,7 +98,8 @@ const FarmerOrders = () => {
         <main className="dashboard-main">
 
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Orders</h1>
+                                    <p className="dashboard-subtitle text-dark fw-bold ">Orders</p>
+
             <p className="dashboard-subtitle">
               Manage incoming pre-orders from customers
             </p>
@@ -289,12 +290,12 @@ const FarmerOrders = () => {
                       </div>
                     )}
 
-                    {order.notes && (
+                    {/* {order.notes && (
                       <div className="fo-notes">
                         <i className="fas fa-sticky-note"></i>
                         <span>{order.notes}</span>
                       </div>
-                    )}
+                    )} */}
 
                     <div className="fo-foot">
                       <div className="fo-total">
@@ -364,7 +365,7 @@ const FarmerOrders = () => {
 
         </main>
       </div>
-      <Footer />
+     
     </div>
   );
 };

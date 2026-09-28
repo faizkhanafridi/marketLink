@@ -17,26 +17,30 @@ export const productApi = {
     return response.data;
   },
 
-  create: async (productData) => {
-    const response = await axiosInstance.post('/products', productData);
+  create: async (payload) => {
+    const isFormData = payload instanceof FormData;
+
+    const response = await axiosInstance.post('/products', payload, {
+      headers: isFormData
+        ? { 'Content-Type': 'multipart/form-data' }
+        : { 'Content-Type': 'application/json' },
+    });
     return response.data;
   },
 
-  uploadImage: async (file) => {
-  const formData = new FormData();
-  formData.append('image', file);
+  update: async (id, payload) => {
+    const isFormData = payload instanceof FormData;
 
-  const response = await axiosInstance.post(
-    '/upload/product-image',
-    formData,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    if (isFormData) {
+      // Method spoofing — POST with _method=PUT so PHP parses the multipart body
+      payload.append('_method', 'PUT');
+      const response = await axiosInstance.post(`/products/${id}`, payload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
     }
-  );
-  return response.data; // { path, url }
-},
-  update: async (id, productData) => {
-    const response = await axiosInstance.put(`/products/${id}`, productData);
+
+    const response = await axiosInstance.put(`/products/${id}`, payload);
     return response.data;
   },
 

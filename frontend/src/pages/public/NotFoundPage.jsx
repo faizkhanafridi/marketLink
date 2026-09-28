@@ -392,7 +392,7 @@ const NotFoundPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                This patch of the field
+                The page you're looking for
                 <motion.span
                   className="nf-title-accent"
                   initial={{ opacity: 0, y: 15 }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
@@ -9,6 +9,8 @@ import { formatCurrency } from '../../utils/formatters';
 import { toast } from 'react-toastify';
 import '../../styles/dashboard.css';
 import '../../styles/forms.css';
+import { motion, AnimatePresence } from 'framer-motion';
+import EmptyState from '../../components/common/EmptyState';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -80,11 +82,34 @@ const CheckoutPage = () => {
   }
 };
 
-  if (cartItems.length === 0) {
-    navigate('/customer/cart');
-    return null;
-  }
 
+  if (cartItems.length === 0) {
+    return (
+      <div className="dashboard-page">
+        <Navbar />
+        <div className="dashboard-layout">
+          <CustomerSidebar />
+          <main className="dashboard-main">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <EmptyState
+                icon="shopping-basket"
+                title="Your Cart is Empty"
+                message="Browse products and add items to your cart."
+                actionText="Add Product To Cart"
+                onAction={() => navigate('/customer/cart')}
+              />
+            </motion.div>
+          </main>
+        </div>
+        
+      </div>
+    );
+  }
+ 
   return (
     <div className="dashboard-page">
       <Navbar />
@@ -92,7 +117,8 @@ const CheckoutPage = () => {
         <CustomerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Checkout</h1>
+                          <p className="dashboard-subtitle text-dark fw-bold ">Checkout</p>
+
             <p className="dashboard-subtitle">Select your pickup details</p>
           </div>
 

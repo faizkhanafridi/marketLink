@@ -47,7 +47,8 @@ const CustomerDashboard = () => {
         <CustomerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Welcome, {user?.username}</h1>
+                          <p className="dashboard-subtitle text-dark fw-bold ">Welcome, {user?.username}</p>
+
             <p className="dashboard-subtitle">Here's your MarketLink activity overview</p>
           </div>
 
