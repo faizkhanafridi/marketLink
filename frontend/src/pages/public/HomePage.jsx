@@ -32,6 +32,10 @@ import {
 } from "../../assets/images";
 import "../../styles/home.css";
 import { AuthContext } from "../../context/AuthContext";
+import {
+  SkeletonProductGrid,
+  SkeletonFarmerGrid,
+} from "../../components/common/SkeletonCard";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -554,7 +558,7 @@ const HomePage = () => {
           </motion.div>
 
           {loading ? (
-            <Loader message="Loading products..." />
+            <SkeletonProductGrid count={8} />
           ) : featuredProducts.length === 0 ? (
             <p className="no-data-message">No products available yet.</p>
           ) : (
@@ -608,27 +612,20 @@ const HomePage = () => {
               </Link>
             </motion.div>
           </motion.div>
-
           {loading ? (
-            <Loader message="Loading farmers..." />
+            <SkeletonFarmerGrid count={4} />
           ) : featuredFarmers.length === 0 ? (
             <p className="no-data-message">No farmers registered yet.</p>
           ) : (
-            <motion.div
-              className="farmers-grid"
-              initial="hidden"
+            <motion.div className="farmers-grid" initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
-              variants={stagger}
-            >
+              variants={stagger}>
               {featuredFarmers.map((farmer, i) => (
-                <motion.div
-                  key={farmer.farmer_id}
-                  variants={fadeUp}
+                <motion.div key={farmer.farmer_id}  variants={fadeUp}
                   custom={i}
                   whileHover={{ y: -6 }}
-                  transition={{ duration: 0.3 }}
-                >
+                  transition={{ duration: 0.3 }}>
                   <FarmerCard farmer={farmer} />
                 </motion.div>
               ))}
