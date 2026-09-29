@@ -11,6 +11,12 @@ import {
   Menu,
   X,
   User,
+} from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { useCart } from '../../hooks/useCart';
+import Logo from './Logo';
+import NotificationBell from './NotificationBell';
+import '../../styles/navbar.css';
   ArrowRight,
   Sprout,
   Sparkles,
@@ -187,6 +193,66 @@ const Navbar = () => {
               className="navbar-brand"
               onClick={() => setMobileOpen(false)}
             >
+              <Logo size={42} />
+            </motion.div>
+            <div className="brand-text">
+              <span className="brand-name">
+                <span className="brand-name-primary">Market</span>
+                <span className="brand-name-accent">Link</span>
+              </span>
+              <span className="brand-tagline">eGreen Basket</span>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* ===== DESKTOP NAV ===== */}
+        <motion.div
+          className="navbar-menu"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {['Home', 'Products', 'Markets', 'Farmers', 'About', 'Contact'].map((item) => {
+            const path = item === 'Home' ? '/' : `/${item.toLowerCase()}`;
+            return (
+              <motion.div key={item} variants={itemVariants}>
+                <NavLink to={path} end={item === 'Home'} className="nav-link">
+                  {item}
+                </NavLink>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* ===== ACTIONS ===== */}
+        <motion.div
+          className="navbar-actions"
+          variants={authVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {isAuthenticated ? (
+            <>
+              {/* Notification bell — added next to cart */}
+              <NotificationBell />
+
+              {user?.role === 'customer' && (
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <Link to="/customer/cart" className="cart-button" aria-label="Basket">
+                    <ShoppingBag size={19} strokeWidth={2} />
+                    {cartCount > 0 && (
+                      <motion.span
+                        className="cart-badge"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                      >
+                        {cartCount}
+                      </motion.span>
+                    )}
+                  </Link>
+                </motion.div>
+              )}
               <motion.div
                 className="brand-logo"
                 whileHover={{ rotate: -6, scale: 1.08 }}

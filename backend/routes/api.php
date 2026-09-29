@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\MarketController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\Admin\AdminNotificationController;
 use Illuminate\Support\Facades\Route;
 
 // Public
@@ -47,6 +49,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::patch('/orders/{id}/cancel', [OrderController::class, 'cancel']);
 
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::delete('/notifications', [NotificationController::class, 'clearAll']);
      // ============================================
     // CUSTOMER ROUTES
     // ============================================
@@ -91,7 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
         Route::get('/reviews', [AdminController::class, 'reviews']);
         Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
-        Route::delete('/reviews/{id}', [AdminController::class, 'deleteReview']);
         Route::get('/reports', [AdminController::class, 'reports']);
 
         Route::get('/categories', [AdminController::class, 'categories']);
@@ -101,5 +109,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/markets', [MarketController::class, 'store']);
         Route::put('/markets/{id}', [MarketController::class, 'update']);
         Route::delete('/markets/{id}', [MarketController::class, 'destroy']);
+
+        //  Broadcast notifications
+        Route::post('/notifications/broadcast', [AdminNotificationController::class, 'broadcast']);
+        Route::get('/notifications', [AdminNotificationController::class, 'index']);
     });
 });

@@ -98,6 +98,17 @@ const AdminSidebar = () => {
           </Link>
         </div>
 
+        {/* Notification */}
+        <div className="sidebar-section">
+          <Link 
+            to="/admin/notifications" 
+            className="sidebar-section-header">
+              <span className="sidebar-section-label">
+                <i className="fas fa-bullhorn"></i> Notifications
+              </span>
+            </Link>
+        </div>
+
         {/* Catalog */}
         <div className="sidebar-section">
           <button

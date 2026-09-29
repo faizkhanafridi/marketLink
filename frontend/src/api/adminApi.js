@@ -111,4 +111,25 @@ export const adminApi = {
     // This keeps the API structure consistent with all other methods.
     return response.data;
   },
+
+    // ============================================================
+  // NOTIFICATIONS — BROADCAST & HISTORY
+  // ============================================================
+
+  broadcastNotification: async (data) => {
+    const response = await axiosInstance.post(
+      '/admin/notifications/broadcast',
+      data
+    );
+
+    return response.data;
+  },
+
+  getSentNotifications: async (params = {}) => {
+    const response = await axiosInstance.get('/admin/notifications', {
+      params,
+    });
+
+    return response.data;
+  },
 };

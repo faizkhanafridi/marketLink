@@ -7,6 +7,7 @@ use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,9 @@ class OrderController extends Controller
                     'price'      => $product->price,
                     'subtotal'   => $subtotal,
                 ];
+
+                // Optional: deduct stock
+                $product->decrement('stock_quantity', $item['quantity']);
             }
 
             $order = $this->orderRepo->create([
@@ -79,10 +83,14 @@ class OrderController extends Controller
 
             DB::commit();
 
+            // 📬 Notify farmer about new order
+            NotificationService::orderPlaced($order->load('customer', 'farmer.user'));
+
             return response()->json([
                 'message' => 'Order placed successfully',
                 'order'   => new OrderResource($order->load('items.product', 'farmer')),
             ], 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Order failed', 'error' => $e->getMessage()], 500);
@@ -93,7 +101,6 @@ class OrderController extends Controller
     {
         $order = $this->orderRepo->findOrFail($id)->load(['items.product', 'farmer', 'customer']);
 
-        // Authorization
         $user = $request->user();
         if ($user->role === 'customer' && $order->customer_id !== $user->user_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -117,7 +124,22 @@ class OrderController extends Controller
         }
 
         $updated = $this->orderRepo->updateStatus($id, $request->status);
-        return response()->json(['message' => 'Status updated', 'order' => new OrderResource($updated)]);
+        $updated->load('customer', 'farmer.user');
+
+        // 📬 Send notification based on new status
+        match ($request->status) {
+            'accepted'         => NotificationService::orderAccepted($updated),
+            'declined'         => NotificationService::orderDeclined($updated),
+            'ready_for_pickup' => NotificationService::orderReady($updated),
+            'completed'        => NotificationService::orderCompleted($updated),
+            'cancelled'        => NotificationService::orderCancelled($updated),
+            default            => null,
+        };
+
+        return response()->json([
+            'message' => 'Status updated',
+            'order'   => new OrderResource($updated),
+        ]);
     }
 
     public function cancel(Request $request, int $id): JsonResponse
@@ -133,6 +155,10 @@ class OrderController extends Controller
         }
 
         $this->orderRepo->updateStatus($id, 'cancelled');
+
+        // 📬 Notify farmer
+        NotificationService::orderCancelled($order->load('farmer.user'));
+
         return response()->json(['message' => 'Order cancelled']);
     }
 }

@@ -3,6 +3,7 @@ export const basketHarvest3DImg =
 
 export const heroMarket3DImg =
   '../../assets/images/hero_market_3d_render_1790343134303.jpg';
+
   
 export const iconProduce3D =
   'https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=300&q=80';

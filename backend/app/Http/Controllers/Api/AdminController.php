@@ -13,6 +13,7 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -42,6 +43,10 @@ class AdminController extends Controller
     public function approveFarmer(int $id): JsonResponse
     {
         $user = $this->userRepo->approveFarmer($id);
+    
+        // 📬 Notify farmer
+        NotificationService::farmerApproved($user);
+    
         return response()->json(['message' => 'Farmer approved', 'user' => new UserResource($user)]);
     }
 

@@ -1,3 +1,8 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NotificationProvider } from './context/NotificationContext';
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -10,6 +15,17 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import FlyToCartLayer from "./components/common/FlyToCartLayer";
 
 // Public Pages
+import HomePage from './pages/public/HomePage';
+import AboutPage from './pages/public/AboutPage';
+import ContactPage from './pages/public/ContactPage';
+import MarketsPage from './pages/public/MarketsPage';
+import MarketDetailPage from './pages/public/MarketDetailPage';
+import FarmersPage from './pages/public/FarmersPage';
+import FarmerDetailPage from './pages/public/FarmerDetailPage';
+import ProductsPage from './pages/public/ProductsPage';
+import ProductDetailPage from './pages/public/ProductDetailPage';
+import NotificationsPage from './components/common/NotificationsPage';
+import AdminNotifications from './pages/admin/AdminNotifications';
 import HomePage from "./pages/public/HomePage";
 import AboutPage from "./pages/public/AboutPage";
 import ContactPage from "./pages/public/ContactPage";
@@ -59,6 +75,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <NotificationProvider>
         <CartProvider>
           <FlyToCartProvider>
             <div className="app-container">
@@ -249,6 +266,8 @@ function App() {
                   }
                 />
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/admin/notifications" element={<AdminNotifications />} />
               </Routes>
         <ChatBot />
 
@@ -258,6 +277,7 @@ function App() {
             </div>
           </FlyToCartProvider>
         </CartProvider>
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );
