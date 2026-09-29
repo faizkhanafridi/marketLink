@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MarketController;
@@ -54,13 +56,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
     Route::delete('/notifications', [NotificationController::class, 'clearAll']);
+     // ============================================
+    // CUSTOMER ROUTES
+    // ============================================
+    Route::middleware('role:customer')->group(function () {
+        // Customer Dashboard
+        Route::get('/customer/dashboard', [CustomerController::class, 'dashboard']);
+
+        // Pickup Reminders
+        Route::get('/customer/pickup-reminders', [CustomerController::class, 'pickupReminders']);
+
+        // AI Chatbot
+        Route::post('/chatbot', [ChatbotController::class, 'chat']);
+    });
 
     // Farmer
     Route::middleware('role:farmer')->group(function () {
         Route::get('/farmer/dashboard', [FarmerController::class, 'dashboard']);
-        Route::get('/analytics', [FarmerController::class, 'analytics']);
+      Route::get('/farmer/analytics', [FarmerController::class, 'analytics']);
+      Route::get('/farmer/sales', [FarmerController::class, 'sales']);
+      
         Route::put('/farmer/profile', [FarmerController::class, 'updateProfile']);
 
+        Route::get('/farmer/products', [FarmerController::class, 'myProducts']);
         Route::post('/products', [ProductController::class, 'store']);
         Route::put('/products/{id}', [ProductController::class, 'update']);
         Route::delete('/products/{id}', [ProductController::class, 'destroy']);

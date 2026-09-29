@@ -1,7 +1,7 @@
 /* cards.css — MarketLink card styles */
 
 /* ============================================================
-   PRODUCT CARD — compact, self-describing
+   PRODUCT CARD
    ============================================================ */
 
 .product-card {
@@ -32,7 +32,7 @@
   flex: 1;
 }
 
-/* ---------- Image (fixed compact height) ---------- */
+/* ---------- Image ---------- */
 .product-image-wrapper {
   position: relative;
   width: 100%;
@@ -273,11 +273,11 @@
 .farmer-card {
   display: flex;
   flex-direction: column;
-  background: var(--color-white, #ffffff);
-  border-radius: var(--radius-md, 14px);
+  background: #ffffff;
+  border-radius: 14px;
   padding: 26px;
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.04));
-  border: 1px solid var(--color-border-light, #ebe8e2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ebe8e2;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -287,8 +287,8 @@
 
 .farmer-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg, 0 16px 32px rgba(0, 0, 0, 0.08));
-  border-color: var(--color-border, #d9ddd9);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+  border-color: #d9ddd9;
 }
 
 .farmer-card-header {
@@ -298,13 +298,18 @@
   margin-bottom: 18px;
 }
 
+.farmer-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .farmer-avatar {
   width: 56px;
   height: 56px;
   flex-shrink: 0;
-  background: var(--color-primary, #194d26);
-  color: var(--color-white, #ffffff);
-  border-radius: var(--radius-sm, 10px);
+  background: #194d26;
+  color: #ffffff;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,14 +321,14 @@
 .farmer-stall-name {
   font-size: 17px;
   margin-bottom: 3px;
-  color: var(--color-black, #1c1917);
+  color: #1c1917;
   letter-spacing: -0.01em;
   font-weight: 700;
 }
 
 .farmer-contact {
   font-size: 13px;
-  color: var(--color-text-lighter, #a8a29e);
+  color: #a8a29e;
 }
 
 .farmer-card-body {
@@ -332,7 +337,7 @@
 
 .farmer-description {
   font-size: 14px;
-  color: var(--color-text-light, #78716c);
+  color: #78716c;
   line-height: 1.65;
   margin-bottom: 16px;
   display: -webkit-box;
@@ -352,11 +357,11 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: var(--color-text-light, #78716c);
+  color: #78716c;
 }
 
 .meta-item i {
-  color: var(--color-primary-light, #4a7c2e);
+  color: #4a7c2e;
   width: 14px;
   font-size: 13px;
   flex-shrink: 0;
@@ -365,7 +370,7 @@
 .farmer-card-footer {
   margin-top: 20px;
   padding-top: 18px;
-  border-top: 1px solid var(--color-border-light, #ebe8e2);
+  border-top: 1px solid #ebe8e2;
 }
 
 .view-profile-btn {
@@ -374,12 +379,51 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-primary, #194d26);
+  color: #194d26;
   transition: gap 0.15s ease;
 }
 
 .farmer-card:hover .view-profile-btn {
   gap: 12px;
+}
+
+/* Farmer favorite button */
+.farmer-card-fav {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid #ebe8e2;
+  background: #ffffff;
+  color: #a8a29e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.farmer-card-fav:hover:not(:disabled) {
+  border-color: #c0392b;
+  color: #c0392b;
+  transform: scale(1.05);
+}
+
+.farmer-card-fav.active {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #ffffff;
+}
+
+.farmer-card-fav.active:hover:not(:disabled) {
+  background: #a93226;
+  border-color: #a93226;
+}
+
+.farmer-card-fav:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ============================================================
@@ -390,11 +434,11 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: var(--color-white, #ffffff);
-  border-radius: var(--radius-md, 14px);
+  background: #ffffff;
+  border-radius: 14px;
   padding: 24px;
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.04));
-  border: 1px solid var(--color-border-light, #ebe8e2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ebe8e2;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -405,17 +449,17 @@
 
 .market-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
-  border-color: var(--color-primary-lighter, #dfe8dc);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: #dfe8dc;
 }
 
 .market-card-icon {
   width: 58px;
   height: 58px;
   flex-shrink: 0;
-  background: var(--color-primary-lighter, #eef4e8);
-  color: var(--color-primary, #194d26);
-  border-radius: var(--radius-sm, 10px);
+  background: #eef4e8;
+  color: #194d26;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -430,7 +474,7 @@
 .market-name {
   font-size: 17px;
   margin-bottom: 10px;
-  color: var(--color-black, #1c1917);
+  color: #1c1917;
   letter-spacing: -0.01em;
   font-weight: 700;
 }
@@ -440,20 +484,20 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--color-text-light, #78716c);
+  color: #78716c;
   margin-bottom: 5px;
   line-height: 1.5;
 }
 
 .market-card-content i {
-  color: var(--color-primary-light, #4a7c2e);
+  color: #4a7c2e;
   width: 14px;
   font-size: 13px;
   flex-shrink: 0;
 }
 
 .market-card-arrow {
-  color: var(--color-text-lighter, #a8a29e);
+  color: #a8a29e;
   transition:
     transform 0.15s ease,
     color 0.15s ease;
@@ -463,7 +507,7 @@
 
 .market-card:hover .market-card-arrow {
   transform: translateX(4px);
-  color: var(--color-primary, #194d26);
+  color: #194d26;
 }
 
 /* ============================================================
@@ -512,7 +556,7 @@
 .marker-pin {
   width: 30px;
   height: 30px;
-  background: var(--color-primary, #194d26);
+  background: #194d26;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   display: flex;
@@ -523,7 +567,7 @@
 
 .marker-pin i {
   transform: rotate(45deg);
-  color: var(--color-white, #ffffff);
+  color: #ffffff;
   font-size: 13px;
 }
 
@@ -553,57 +597,4 @@
     width: calc(100% - 28px);
     margin: 0 14px 14px;
   }
-}
-
-
-/* ============================================
-   Farmer card favorite button
-   ============================================ */
-.farmer-card-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.farmer-header-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.farmer-card-fav {
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-text-lighter);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.farmer-card-fav:hover:not(:disabled) {
-  border-color: #c0392b;
-  color: #c0392b;
-  transform: scale(1.05);
-}
-
-.farmer-card-fav.active {
-  background: #c0392b;
-  border-color: #c0392b;
-  color: #ffffff;
-}
-
-.farmer-card-fav.active:hover:not(:disabled) {
-  background: #a93226;
-  border-color: #a93226;
-}
-
-.farmer-card-fav:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }

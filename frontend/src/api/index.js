@@ -9,3 +9,7 @@ export { adminApi } from './adminApi';
 export { categoryApi } from './categoryApi';
 export { notificationApi } from './notificationApi';   
 export { default as axiosInstance } from './axiosConfig';
+export { default as axiosInstance } from './axiosConfig';
+export { categoryApi } from './categoryApi';   
+export { customerApi } from './customerApi';   
+export { chatbotApi } from './chatbotApi';     

@@ -52,7 +52,8 @@ const FavoritesPage = () => {
         <CustomerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">My Favorites</h1>
+                          <p className="dashboard-subtitle text-dark fw-bold ">My Favorites</p>
+
             <p className="dashboard-subtitle">
               Your saved products and farmers
             </p>
@@ -114,7 +115,7 @@ const FavoritesPage = () => {
           )}
         </main>
       </div>
-      <Footer />
+    
     </div>
   );
 };

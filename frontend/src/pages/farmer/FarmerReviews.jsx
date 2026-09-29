@@ -57,7 +57,8 @@ const FarmerReviews = () => {
         <FarmerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">Customer Reviews</h1>
+                                    <p className="dashboard-subtitle text-dark fw-bold ">Customer Reviews</p>
+
             <p className="dashboard-subtitle">View and respond to customer feedback</p>
           </div>
 
@@ -121,7 +122,7 @@ const FarmerReviews = () => {
           )}
         </main>
       </div>
-      <Footer />
+      
     </div>
   );
 };

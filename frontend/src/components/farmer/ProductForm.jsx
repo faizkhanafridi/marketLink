@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Upload,
   X,
@@ -10,18 +10,18 @@ import {
   FileText,
   Check,
   AlertCircle,
-} from 'lucide-react';
-
+} from "lucide-react";
+import { getImageUrl } from "../../utils/formatters";
 const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    unit: '',
-    stock_quantity: '',
-    category_id: '',
+    name: "",
+    description: "",
+    price: "",
+    unit: "",
+    stock_quantity: "",
+    category_id: "",
     is_available: true,
   });
 
@@ -33,23 +33,23 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
   useEffect(() => {
     if (product) {
       setFormData({
-        name: product.name || '',
-        description: product.description || '',
-        price: product.price || '',
-        unit: product.unit || '',
-        stock_quantity: product.stock_quantity || '',
-        category_id: product.category_id || product.category?.category_id || '',
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price || "",
+        unit: product.unit || "",
+        stock_quantity: product.stock_quantity || "",
+        category_id: product.category_id || product.category?.category_id || "",
         is_available: product.is_available !== false,
       });
-      setImagePreview(product.image || null);
+      setImagePreview(product.image ? getImageUrl(product.image) : null);
     } else {
       setFormData({
-        name: '',
-        description: '',
-        price: '',
-        unit: '',
-        stock_quantity: '',
-        category_id: '',
+        name: "",
+        description: "",
+        price: "",
+        unit: "",
+        stock_quantity: "",
+        category_id: "",
         is_available: true,
       });
       setImageFile(null);
@@ -61,18 +61,18 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleFile = (file) => {
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be under 5 MB');
+      alert("Image must be under 5 MB");
       return;
     }
     setImageFile(file);
@@ -91,7 +91,7 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
   const handleRemoveImage = () => {
     setImageFile(null);
     setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e) => {
@@ -99,14 +99,15 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
     setSubmitting(true);
 
     const payload = new FormData();
-    payload.append('name', formData.name);
-    payload.append('description', formData.description || '');
-    payload.append('price', formData.price);
-    payload.append('unit', formData.unit || '');
-    payload.append('stock_quantity', formData.stock_quantity || 0);
-    if (formData.category_id) payload.append('category_id', formData.category_id);
-    payload.append('is_available', formData.is_available ? 1 : 0);
-    if (imageFile) payload.append('image', imageFile);
+    payload.append("name", formData.name);
+    payload.append("description", formData.description || "");
+    payload.append("price", formData.price);
+    payload.append("unit", formData.unit || "");
+    payload.append("stock_quantity", formData.stock_quantity || 0);
+    if (formData.category_id)
+      payload.append("category_id", formData.category_id);
+    payload.append("is_available", formData.is_available ? 1 : 0);
+    if (imageFile) payload.append("image", imageFile);
 
     try {
       await onSubmit(payload);
@@ -118,10 +119,8 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="pf-form">
       <div className="pf-layout">
-
         {/* ==================== LEFT: FIELDS ==================== */}
         <div className="pf-fields">
-
           {/* Basic info */}
           <section className="pf-section">
             <div className="pf-section-head">
@@ -286,7 +285,6 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
               </span>
             </label>
           </section>
-
         </div>
 
         {/* ==================== RIGHT: IMAGE ==================== */}
@@ -302,8 +300,8 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
           </div>
 
           <div
-            className={`pf-drop ${dragging ? 'is-dragging' : ''} ${
-              imagePreview ? 'has-image' : ''
+            className={`pf-drop ${dragging ? "is-dragging" : ""} ${
+              imagePreview ? "has-image" : ""
             }`}
             onDragOver={(e) => {
               e.preventDefault();
@@ -318,11 +316,11 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
             {imagePreview ? (
               <>
                 <img
-                  src={imagePreview}
+                  src={getImageUrl(imagePreview)}
                   alt="Preview"
                   className="pf-drop-img"
                   onError={(e) => {
-                    e.target.src = '/assets/images/default-product.jpg';
+                    e.target.src = "/assets/images/default-product.jpg";
                   }}
                 />
                 <button
@@ -369,14 +367,15 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
             </div>
           )}
         </aside>
-
       </div>
 
       {/* ==================== ACTIONS ==================== */}
       <div className="pf-actions">
         <div className="pf-actions-note">
           <AlertCircle size={13} />
-          <span>Fields marked with <strong>*</strong> are required</span>
+          <span>
+            Fields marked with <strong>*</strong> are required
+          </span>
         </div>
 
         <div className="pf-actions-buttons">
@@ -401,7 +400,7 @@ const ProductForm = ({ product, categories = [], onSubmit, onCancel }) => {
             ) : (
               <>
                 <Check size={15} />
-                {product ? 'Update Product' : 'Create Product'}
+                {product ? "Update Product" : "Create Product"}
               </>
             )}
           </button>

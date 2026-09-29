@@ -1,50 +1,47 @@
-import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import '../../styles/dashboard.css';
+import React, { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  ShoppingBasket,
+  Heart,
+  User,
+  ChevronDown,
+  ChevronRight,
+  ShoppingCart,
+} from "lucide-react";
+import "../../styles/dashboard.css";
 
 const CustomerSidebar = () => {
   const location = useLocation();
 
-  // Extract current path and search params once
   const currentPath = location.pathname;
   const currentSearch = new URLSearchParams(location.search);
-  const currentStatus = currentSearch.get('status'); // for orders
-  const currentTab = currentSearch.get('tab'); // for favorites
+  const currentStatus = currentSearch.get("status");
+  const currentTab = currentSearch.get("tab");
 
-  // Which sections are expanded (based on current URL)
+  // ALL sections expanded by default
   const [expanded, setExpanded] = useState({
-    orders: currentPath.startsWith('/customer/orders'),
-    favorites: currentPath.startsWith('/customer/favorites'),
+    orders: true,
+    favorites: true,
   });
 
   const toggleSection = (key) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // ---- Helper: is a link with `?status=X` the active one?
-  const isOrderStatusActive = (status) => {
-    return (
-      currentPath === '/customer/orders' && currentStatus === status
-    );
-  };
+  /* ---------- Active helpers ---------- */
+  const isOrderStatusActive = (status) =>
+    currentPath === "/customer/orders" && currentStatus === status;
 
-  // ---- Helper: is the "All Orders" link active?
-  const isAllOrdersActive = () => {
-    // Active only if we're on /customer/orders with no status filter
-    return currentPath === '/customer/orders' && !currentStatus;
-  };
+  const isAllOrdersActive = () =>
+    currentPath === "/customer/orders" && !currentStatus;
 
-  // ---- Helper: is a favorites tab active?
-  const isFavoritesTabActive = (tab) => {
-    return (
-      currentPath === '/customer/favorites' && currentTab === tab
-    );
-  };
+  const isFavoritesTabActive = (tab) =>
+    currentPath === "/customer/favorites" && currentTab === tab;
 
-  // ---- Helper: is the Favorites landing (no tab) active?
-  const isFavoritesRootActive = () => {
-    return currentPath === '/customer/favorites' && !currentTab;
-  };
+  const isFavoritesRootActive = () =>
+    currentPath === "/customer/favorites" && !currentTab;
 
   return (
     <aside className="dashboard-sidebar">
@@ -56,30 +53,32 @@ const CustomerSidebar = () => {
             to="/customer"
             end
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? "active" : ""}`
             }
           >
-            <i className="fas fa-tachometer-alt"></i> Dashboard
+            <span className="sidebar-section-label">
+              <LayoutDashboard size={16} /> Dashboard
+            </span>
           </NavLink>
         </div>
 
-        {/* My Orders — Dropdown */}
+        {/* My Orders */}
         <div className="sidebar-section">
           <button
             type="button"
             className={`sidebar-section-header ${
-              currentPath.startsWith('/customer/orders') ? 'active' : ''
+              currentPath.startsWith("/customer/orders") ? "active" : ""
             }`}
-            onClick={() => toggleSection('orders')}
+            onClick={() => toggleSection("orders")}
           >
             <span className="sidebar-section-label">
-              <i className="fas fa-shopping-bag"></i> My Orders
+              <ShoppingBag size={16} /> My Orders
             </span>
-            <i
-              className={`fas fa-chevron-${
-                expanded.orders ? 'down' : 'right'
-              } sidebar-chevron`}
-            ></i>
+            {expanded.orders ? (
+              <ChevronDown size={14} className="sidebar-chevron" />
+            ) : (
+              <ChevronRight size={14} className="sidebar-chevron" />
+            )}
           </button>
 
           {expanded.orders && (
@@ -88,67 +87,62 @@ const CustomerSidebar = () => {
                 to="/customer/orders"
                 end
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isAllOrdersActive() ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isAllOrdersActive() ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-list"></i> All Orders
+                All Orders
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=placed"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isOrderStatusActive('placed') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isOrderStatusActive("placed") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-hourglass-half"></i> Placed
+                Placed
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=accepted"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isOrderStatusActive('accepted') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isOrderStatusActive("accepted") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-check"></i> Accepted
+                Accepted
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=ready_for_pickup"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isOrderStatusActive('ready_for_pickup') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isOrderStatusActive("ready_for_pickup") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-box-open"></i> Ready
+                Ready
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=completed"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isOrderStatusActive('completed') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isOrderStatusActive("completed") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-check-double"></i> Completed
+                Completed
               </NavLink>
-
               <NavLink
                 to="/customer/orders?status=cancelled"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isOrderStatusActive('cancelled') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isOrderStatusActive("cancelled") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-times-circle"></i> Cancelled
+                Cancelled
               </NavLink>
             </div>
           )}
@@ -159,30 +153,46 @@ const CustomerSidebar = () => {
           <NavLink
             to="/customer/cart"
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? "active" : ""}`
             }
           >
-            <i className="fas fa-shopping-basket"></i> Cart
+            <span className="sidebar-section-label">
+              <ShoppingBasket size={16} /> Cart
+            </span>
           </NavLink>
         </div>
 
-        {/* Favorites — Dropdown */}
+        {/* Checkout */}
+        <div className="sidebar-section">
+          <NavLink
+            to="/customer/checkout"
+            className={({ isActive }) =>
+              `sidebar-section-header ${isActive ? "active" : ""}`
+            }
+          >
+            <span className="sidebar-section-label">
+              <ShoppingCart size={16} /> Checkout
+            </span>
+          </NavLink>
+        </div>
+
+        {/* Favorites */}
         <div className="sidebar-section">
           <button
             type="button"
             className={`sidebar-section-header ${
-              currentPath.startsWith('/customer/favorites') ? 'active' : ''
+              currentPath.startsWith("/customer/favorites") ? "active" : ""
             }`}
-            onClick={() => toggleSection('favorites')}
+            onClick={() => toggleSection("favorites")}
           >
             <span className="sidebar-section-label">
-              <i className="fas fa-heart"></i> Favorites
+              <Heart size={16} /> Favorites
             </span>
-            <i
-              className={`fas fa-chevron-${
-                expanded.favorites ? 'down' : 'right'
-              } sidebar-chevron`}
-            ></i>
+            {expanded.favorites ? (
+              <ChevronDown size={14} className="sidebar-chevron" />
+            ) : (
+              <ChevronRight size={14} className="sidebar-chevron" />
+            )}
           </button>
 
           {expanded.favorites && (
@@ -191,34 +201,32 @@ const CustomerSidebar = () => {
                 to="/customer/favorites"
                 end
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isFavoritesRootActive() ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isFavoritesRootActive() ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-list"></i> All Favorites
+                All Favorites
               </NavLink>
-
               <NavLink
                 to="/customer/favorites?tab=products"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isFavoritesTabActive('products') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isFavoritesTabActive("products") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-box"></i> Products
+                Products
               </NavLink>
-
               <NavLink
                 to="/customer/favorites?tab=farmers"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isFavoritesTabActive('farmers') ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    isFavoritesTabActive("farmers") ? "active" : ""
                   }`
                 }
               >
-                <i className="fas fa-tractor"></i> Farmers
+                Farmers
               </NavLink>
             </div>
           )}
@@ -229,10 +237,12 @@ const CustomerSidebar = () => {
           <NavLink
             to="/customer/profile"
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? "active" : ""}`
             }
           >
-            <i className="fas fa-user"></i> Profile
+            <span className="sidebar-section-label">
+              <User size={16} /> Profile
+            </span>
           </NavLink>
         </div>
 

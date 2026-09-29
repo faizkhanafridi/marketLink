@@ -30,6 +30,7 @@ const OrderDetailPage = () => {
 
   useEffect(() => {
     fetchOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleCancel = async () => {
@@ -56,7 +57,9 @@ const OrderDetailPage = () => {
   const getStepStatus = (stepKey) => {
     if (!order) return 'pending';
     if (order.order_status === 'cancelled') return 'cancelled';
-    const orderIndex = timelineSteps.findIndex((s) => s.key === order.order_status);
+    const orderIndex = timelineSteps.findIndex(
+      (s) => s.key === order.order_status
+    );
     const stepIndex = timelineSteps.findIndex((s) => s.key === stepKey);
     if (orderIndex === -1) return 'pending';
     if (stepIndex < orderIndex) return 'completed';
@@ -102,21 +105,36 @@ const OrderDetailPage = () => {
       <div className="dashboard-layout">
         <CustomerSidebar />
         <main className="dashboard-main">
+
+          {/* ---------- Header ---------- */}
           <div className="dashboard-header">
             <div className="header-with-back">
-              <button className="back-btn" onClick={() => navigate('/customer/orders')}>
+              <button
+                type="button"
+                className="back-btn"
+                onClick={() => navigate('/customer/orders')}
+                aria-label="Back to orders"
+              >
                 <i className="fas fa-arrow-left"></i>
               </button>
               <div>
-                <h1 className="dashboard-title">Order #{order.order_id}</h1>
-                <p className="dashboard-subtitle">Placed on {formatDate(order.created_at)}</p>
+                <h1 className="dashboard-subtitle text-dark fw-bold">
+                  Order #{String(order.order_id).padStart(4, '0')}
+                </h1>
+                <p className="dashboard-subtitle">
+                  Placed on {formatDate(order.created_at)}
+                </p>
               </div>
             </div>
+
+       
           </div>
 
+          {/* ---------- Timeline ---------- */}
           {order.order_status === 'cancelled' ? (
             <div className="cancelled-banner">
-              <i className="fas fa-times-circle"></i> This order has been cancelled.
+              <i className="fas fa-times-circle"></i>
+              This order has been cancelled.
             </div>
           ) : (
             <div className="order-timeline">
@@ -134,89 +152,164 @@ const OrderDetailPage = () => {
             </div>
           )}
 
+          {/* ---------- Order Items ---------- */}
           <div className="dashboard-card">
-            <h3 className="card-title">Order Items</h3>
+            <div className="card-header-row">
+              <h3 className="card-subtitle text-dark fw-700">Order Items</h3>
+              <span className="card-subtitle">
+                {order.items?.length || 0}{' '}
+                {order.items?.length === 1 ? 'item' : 'items'}
+              </span>
+            </div>
+
             <div className="order-items-table">
               {order.items?.map((item) => (
-                <div key={item.order_item_id || item.product_id} className="order-item-row">
+                <div
+                  key={item.order_item_id || item.product_id}
+                  className="order-item-row"
+                >
                   <img
-                    src={item.product?.image || '/assets/images/default-product.jpg'}
+                    src={
+                      item.product?.image ||
+                      '/assets/images/default-product.jpg'
+                    }
                     alt={item.product?.name}
                     className="order-item-img"
-                    onError={(e) => { e.target.src = '/assets/images/default-product.jpg'; }}
+                    onError={(e) => {
+                      e.target.src = '/assets/images/default-product.jpg';
+                    }}
                   />
                   <div className="order-item-details">
-                    <span className="order-item-name">{item.product?.name}</span>
-                    <span className="order-item-qty">{item.quantity} x {formatCurrency(item.price)}</span>
+                    <span className="order-item-name">
+                      {item.product?.name}
+                    </span>
+                    <span className="order-item-qty">
+                      {item.quantity} × {formatCurrency(item.price)}
+                    </span>
                   </div>
-                  <span className="order-item-subtotal">{formatCurrency(item.subtotal)}</span>
+                  <span className="order-item-subtotal">
+                    {formatCurrency(item.subtotal)}
+                  </span>
                 </div>
               ))}
             </div>
+
             <div className="order-total-row">
               <span>Total</span>
               <strong>{formatCurrency(order.total_amount)}</strong>
             </div>
           </div>
 
+          {/* ---------- Pickup + Payment ---------- */}
           <div className="detail-grid-two">
-            <div className="dashboard-card">
-              <h3 className="card-title">Pickup Information</h3>
-              <div className="info-list">
-                <div className="info-row">
-                  <i className="fas fa-calendar"></i>
-                  <div>
-                    <span className="info-label">Pickup Date</span>
-                    <span className="info-value">{order.pickup_date}</span>
-                  </div>
+
+            {/* Pickup Information */}
+            <div className="dashboard-card order-info-card">
+              <div className="order-info-head">
+                <span className="order-info-icon">
+                  <i className="fas fa-map-marker-alt"></i>
+                </span>
+                <div>
+                  <h3 className="card-title">Pickup Information</h3>
+                  <p className="card-subtitle">
+                    Where and when to collect your order
+                  </p>
                 </div>
-                <div className="info-row">
-                  <i className="fas fa-clock"></i>
-                  <div>
-                    <span className="info-label">Pickup Slot</span>
-                    <span className="info-value">{order.pickup_slot}</span>
-                  </div>
+              </div>
+
+              <div className="order-info-list">
+                <div className="order-info-row">
+                  <span className="order-info-label">
+                    <i className="fas fa-calendar"></i>
+                    Pickup Date
+                  </span>
+                  <strong className="order-info-value">
+                    {order.pickup_date || '—'}
+                  </strong>
                 </div>
-                <div className="info-row">
-                  <i className="fas fa-tractor"></i>
-                  <div>
-                    <span className="info-label">Farmer</span>
-                    <span className="info-value">{order.farmer?.stall_name}</span>
-                  </div>
+
+                <div className="order-info-row">
+                  <span className="order-info-label">
+                    <i className="fas fa-clock"></i>
+                    Pickup Slot
+                  </span>
+                  <strong className="order-info-value">
+                    {order.pickup_slot || '—'}
+                  </strong>
+                </div>
+
+                <div className="order-info-row">
+                  <span className="order-info-label">
+                    <i className="fas fa-tractor"></i>
+                    Farmer
+                  </span>
+                  <strong className="order-info-value">
+                    {order.farmer?.stall_name || '—'}
+                  </strong>
                 </div>
               </div>
             </div>
 
-            <div className="dashboard-card">
-              <h3 className="card-title">Payment</h3>
-              <div className="payment-info">
-                <p><i className="fas fa-info-circle"></i> Payment is made in person at pickup.</p>
-                <p className="payment-amount">{formatCurrency(order.total_amount)}</p>
+            {/* Payment */}
+            <div className="dashboard-card order-info-card">
+              <div className="order-info-head">
+                <span className="order-info-icon">
+                  <i className="fas fa-wallet"></i>
+                </span>
+                <div>
+                  <h3 className="card-title">Payment</h3>
+                  <p className="card-subtitle">
+                    Settled in person at the stall
+                  </p>
+                </div>
               </div>
+
+              <div className="order-payment-amount">
+                <span className="order-payment-label">Amount Due</span>
+                <span className="order-payment-value">
+                  {formatCurrency(order.total_amount)}
+                </span>
+              </div>
+
+              <div className="order-payment-note">
+                <i className="fas fa-info-circle"></i>
+                <span>
+                  Bring cash or card. Pay directly to the farmer when you
+                  pick up your order.
+                </span>
+              </div>
+
               {order.notes && (
-                <>
-                  <h4 className="sub-heading">Notes</h4>
-                  <p className="order-notes">{order.notes}</p>
-                </>
+                <div className="order-info-notes">
+                  <span className="order-info-label">
+                    <i className="fas fa-sticky-note"></i>
+                    Your Notes
+                  </span>
+                  <p>{order.notes}</p>
+                </div>
               )}
             </div>
+
           </div>
 
+          {/* ---------- Cancel action ---------- */}
           {canCancel && (
             <div className="order-actions">
               <button
-                className="btn btn-danger"
+                type="button"
+                className="order-cancel-btn"
                 onClick={handleCancel}
                 disabled={cancelling}
               >
                 <i className="fas fa-times"></i>
-                {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                {cancelling ? 'Cancelling…' : 'Cancel Order'}
               </button>
             </div>
           )}
+
         </main>
       </div>
-      
+     
     </div>
   );
 };

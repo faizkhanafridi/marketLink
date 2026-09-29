@@ -5,70 +5,61 @@ import '../../styles/dashboard.css';
 const FarmerSidebar = () => {
   const location = useLocation();
 
-  // Current path and query params
   const currentPath = location.pathname;
   const currentSearch = new URLSearchParams(location.search);
-  const currentStatus = currentSearch.get('status'); // for orders
+  const currentStatus = currentSearch.get('status');
 
+  // All sections expanded by default
   const [expanded, setExpanded] = useState({
-    products: currentPath.startsWith('/farmer/products'),
-    orders: currentPath.startsWith('/farmer/orders'),
+    products: true,
+    orders: true,
   });
 
   const toggleSection = (key) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // --- Active-state helpers ---
-  // "All Orders" is active only when we're on /farmer/orders with NO status filter
-  const isAllOrdersActive = () => {
-    return currentPath === '/farmer/orders' && !currentStatus;
-  };
+  /* ---------- Active helpers ---------- */
+  const isAllOrdersActive = () =>
+    currentPath === '/farmer/orders' && !currentStatus;
 
-  // Each specific status link is active only when path AND status match
-  const isOrderStatusActive = (status) => {
-    return currentPath === '/farmer/orders' && currentStatus === status;
-  };
-
-  // Products sub-links
-  const isAllProductsActive = () => {
-    return currentPath === '/farmer/products';
-  };
-
-  const isAddProductActive = () => {
-    return currentPath === '/farmer/products/add';
-  };
+  const isOrderStatusActive = (status) =>
+    currentPath === '/farmer/orders' && currentStatus === status;
 
   return (
     <aside className="dashboard-sidebar">
       <nav className="sidebar-nav">
 
-        {/* Dashboard — single link */}
+        {/* Dashboard */}
         <div className="sidebar-section">
           <NavLink
             to="/farmer"
             end
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? 'active' : ''}`
             }
           >
-            <i className="fas fa-tachometer-alt"></i> Dashboard
+            <span className="sidebar-section-label">
+              <i className="fas fa-tachometer-alt"></i> Dashboard
+            </span>
           </NavLink>
         </div>
 
-        {/* Sales — single link */}
+        {/* Sales */}
         <div className="sidebar-section">
           <NavLink
             to="/farmer/sales"
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? 'active' : ''}`
             }
           >
-            <i className="fas fa-chart-line"></i> Sales
+            <span className="sidebar-section-label">
+              <i className="fas fa-chart-line"></i> Sales
+            </span>
           </NavLink>
         </div>
 
-        {/* Products — Dropdown */}
+        {/* Products */}
         <div className="sidebar-section">
           <button
             type="button"
@@ -93,29 +84,35 @@ const FarmerSidebar = () => {
                 to="/farmer/products"
                 end
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isAllProductsActive() ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    currentPath === '/farmer/products' &&
+                    !currentSearch.get('view')
+                      ? 'active'
+                      : ''
                   }`
                 }
               >
-                <i className="fas fa-list"></i> All Products
+                All Products
               </NavLink>
 
               <NavLink
-                to="/farmer/products/add"
+                to="/farmer/products?view=add"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
-                    isAddProductActive() ? 'active' : ''
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
+                    currentPath === '/farmer/products' &&
+                    currentSearch.get('view') === 'add'
+                      ? 'active'
+                      : ''
                   }`
                 }
               >
-                <i className="fas fa-plus-circle"></i> Add Product
+                Add Product
               </NavLink>
             </div>
           )}
         </div>
 
-        {/* Orders — Dropdown */}
+        {/* Orders */}
         <div className="sidebar-section">
           <button
             type="button"
@@ -140,93 +137,92 @@ const FarmerSidebar = () => {
                 to="/farmer/orders"
                 end
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isAllOrdersActive() ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-list"></i> All Orders
+                All Orders
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=placed"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isOrderStatusActive('placed') ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-hourglass-half"></i> Pending
+                Pending
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=accepted"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isOrderStatusActive('accepted') ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-check"></i> Accepted
+                Accepted
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=ready_for_pickup"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isOrderStatusActive('ready_for_pickup') ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-box-open"></i> Ready
+                Ready
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=completed"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isOrderStatusActive('completed') ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-check-double"></i> Completed
+                Completed
               </NavLink>
-
               <NavLink
                 to="/farmer/orders?status=cancelled"
                 className={() =>
-                  `sidebar-link sidebar-sublink ${
+                  `sidebar-link sidebar-sublink sidebar-sublink-plain ${
                     isOrderStatusActive('cancelled') ? 'active' : ''
                   }`
                 }
               >
-                <i className="fas fa-times-circle"></i> Cancelled
+                Cancelled
               </NavLink>
             </div>
           )}
         </div>
 
-        {/* Reviews — single link */}
+        {/* Reviews */}
         <div className="sidebar-section">
           <NavLink
             to="/farmer/reviews"
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? 'active' : ''}`
             }
           >
-            <i className="fas fa-star"></i> Reviews
+            <span className="sidebar-section-label">
+              <i className="fas fa-star"></i> Reviews
+            </span>
           </NavLink>
         </div>
 
-        {/* Profile — single link */}
+        {/* Profile */}
         <div className="sidebar-section">
           <NavLink
             to="/farmer/profile"
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
+              `sidebar-section-header ${isActive ? 'active' : ''}`
             }
           >
-            <i className="fas fa-user"></i> Profile
+            <span className="sidebar-section-label">
+              <i className="fas fa-user"></i> Profile
+            </span>
           </NavLink>
         </div>
 

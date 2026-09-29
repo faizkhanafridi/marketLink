@@ -1,4 +1,4 @@
-/* navbar.css — MarketLink Navbar + Footer (pure CSS, no Tailwind) */
+/* navbar.css — MarketLink Navbar + Footer */
 
 /* ============================================================
    NAVBAR SHELL
@@ -69,20 +69,19 @@
   height: 30px;
   display: block;
 }
+
 .brand-text {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
   gap: 1px;
 }
-/* ============================================================
-   BRAND NAME — bolder, tighter, more confident
-   ============================================================ */
+
 .brand-name {
-  font-family: var(--font-heading);
+  font-family: var(--font-heading, "Manrope", sans-serif);
   font-size: 22px;
-  font-weight: 800;                 /* was 700 → heavier */
-  letter-spacing: -0.045em;         /* tighter, more "logo" feel */
+  font-weight: 800;
+  letter-spacing: -0.045em;
   line-height: 1;
   transition: color 0.2s ease;
   display: inline-flex;
@@ -93,7 +92,6 @@
 .brand-name-primary {
   color: #194d26;
   font-weight: 800;
-  /* Slight text-shadow to give it more weight on retina displays */
   text-shadow: 0 0 0.5px currentColor;
 }
 
@@ -114,9 +112,9 @@
 .brand-tagline {
   font-size: 9.5px;
   color: #a8a29e;
-  letter-spacing: 0.16em;           /* slightly wider for elegance */
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-weight: 700;                 /* was 600 → matches the weight bump */
+  font-weight: 700;
 }
 
 /* ============================================================
@@ -174,7 +172,6 @@
   flex-shrink: 0;
 }
 
-/* --- Cart Button --- */
 .cart-button {
   position: relative;
   width: 42px;
@@ -214,7 +211,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-/* --- Auth Buttons (guest) --- */
 .auth-actions {
   display: flex;
   align-items: center;
@@ -298,6 +294,14 @@
   font-weight: 700;
   text-transform: uppercase;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .user-name {
@@ -320,7 +324,6 @@
   transform: rotate(180deg);
 }
 
-/* --- Dropdown --- */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -468,100 +471,225 @@
 }
 
 /* ============================================================
-   MOBILE MENU (slide-down)
+   MOBILE DRAWER + BLURRED BACKDROP
    ============================================================ */
-.mobile-menu {
-  display: none;
+.mobile-backdrop-blur {
   position: fixed;
-  top: 72px;
-  left: 0;
+  inset: 0;
+  background: rgba(12, 10, 9, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9998;
+  display: none;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
   right: 0;
+  bottom: 0;
+  width: min(360px, 88vw);
   background: #ffffff;
-  border-bottom: 1px solid #e7e5e4;
-  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
-  transform: translateY(-110%);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.24s ease;
-  z-index: 999;
-  max-height: calc(100vh - 72px);
+  border-left: 1px solid #ebe8e2;
+  box-shadow: -12px 0 40px -12px rgba(28, 25, 23, 0.18);
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
   overflow-y: auto;
+  will-change: transform;
 }
 
-.mobile-menu.open {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
+.mobile-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f2efe9;
+  background: linear-gradient(180deg, #ffffff 0%, #fafaf9 100%);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.mobile-menu-inner {
-  padding: 14px 20px 24px;
+.mobile-drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.mobile-drawer-brand-mark {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #194d26;
+  box-shadow: 0 2px 6px rgba(25, 77, 38, 0.25);
+}
+
+.mobile-drawer-brand-text {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+  min-width: 0;
 }
 
-.mobile-link {
-  display: block;
-  padding: 13px 14px;
+.mobile-drawer-brand-name {
+  font-family: var(--font-heading, "Manrope", sans-serif);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.mobile-drawer-brand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a8a29e;
+}
+
+.mobile-drawer-brand-tag svg {
+  color: #6ee7b7;
+}
+
+.mobile-drawer-close {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ebe8e2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #57534e;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mobile-drawer-close:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.mobile-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 14px 8px;
+  gap: 2px;
+  flex: 1;
+}
+
+.mobile-drawer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 14px;
+  border-radius: 11px;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
   font-size: 15px;
   font-weight: 500;
-  color: #2a2a2a;
+  color: #44403c;
   text-decoration: none;
-  border-radius: 10px;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
 }
 
-.mobile-link:hover {
+.mobile-drawer-link:hover {
   background: #f5f5f4;
   color: #1c1917;
 }
 
-.mobile-link.active {
+.mobile-drawer-link.active {
   background: #eef4e8;
   color: #194d26;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.mobile-auth {
+.mobile-drawer-link-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-drawer-link-arrow {
+  color: #d6d3d1;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mobile-drawer-link:hover .mobile-drawer-link-arrow,
+.mobile-drawer-link.active .mobile-drawer-link-arrow {
+  color: #194d26;
+  transform: translateX(2px);
+}
+
+.mobile-drawer-foot {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 14px;
-  padding-top: 16px;
-  border-top: 1px solid #f5f5f4;
+  padding: 16px 20px 24px;
+  margin-top: auto;
+  border-top: 1px solid #f2efe9;
+  background: #fafaf9;
 }
 
-.mobile-auth .btn-nav {
-  padding: 12px 18px;
+.mobile-drawer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border-radius: 11px;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
   font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mobile-auth .btn-nav.btn-outline {
-  border-color: #e7e5e4;
+.mobile-drawer-btn-ghost {
+  background: #ffffff;
+  border: 1.5px solid #e7e5e4;
+  color: #44403c;
 }
 
-.mobile-backdrop {
-  display: none;
-  position: fixed;
-  inset: 72px 0 0 0;
-  background: rgba(12, 10, 9, 0.4);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 998;
-  animation: backdrop-fade 0.25s ease;
+.mobile-drawer-btn-ghost:hover {
+  background: #f5f5f4;
+  border-color: #d6d3d1;
+  color: #1c1917;
 }
 
-@keyframes backdrop-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.mobile-drawer-btn-solid {
+  background: #194d26;
+  border: 1.5px solid #194d26;
+  color: #ffffff;
+}
+
+.mobile-drawer-btn-solid:hover {
+  background: #143e1f;
+  border-color: #143e1f;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px -6px rgba(25, 77, 38, 0.35);
 }
 
 /* ============================================================
-   ============================================================
-   FOOTER  — preserved from original, refined styling
-   ============================================================
+   FOOTER
    ============================================================ */
 .marketlink-footer {
   background: #111111;
@@ -569,6 +697,7 @@
   padding: 72px 24px 28px;
   margin-top: 80px;
 }
+
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -597,15 +726,16 @@
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-family: var(--font-heading);
+  font-family: var(--font-heading, "Manrope", sans-serif);
   font-weight: 700;
   font-size: 16px;
 }
+
 .footer-brand .brand-name {
-  font-family: var(--font-heading);
+  font-family: var(--font-heading, "Manrope", sans-serif);
   font-size: 22px;
   font-weight: 700;
-  color: var(--color-white, #ffffff);
+  color: #ffffff;
   letter-spacing: -0.02em;
 }
 
@@ -637,18 +767,18 @@
 }
 
 .footer-social a:hover {
-  background: var(--color-primary, #2d5016);
-  color: var(--color-white, #ffffff);
+  background: #194d26;
+  color: #ffffff;
   transform: translateY(-2px);
 }
 
 .footer-heading {
-  font-family: var(--font-primary);
+  font-family: var(--font-primary, "DM Sans", sans-serif);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-white, #ffffff);
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -670,7 +800,7 @@
 }
 
 .footer-links a:hover {
-  color: var(--color-white, #ffffff);
+  color: #ffffff;
 }
 
 .footer-contact {
@@ -690,7 +820,7 @@
 }
 
 .footer-contact i {
-  color: var(--color-primary-light, #4a7c28);
+  color: #4a7c28;
   margin-top: 3px;
   flex-shrink: 0;
 }
@@ -719,11 +849,11 @@
 }
 
 .footer-bottom-links a:hover {
-  color: var(--color-white, #ffffff);
+  color: #ffffff;
 }
 
 /* ============================================================
-   RESPONSIVE — NAVBAR
+   RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
   .navbar-menu {
@@ -734,12 +864,9 @@
     display: flex;
   }
 
-  .mobile-menu {
-    display: block;
-  }
-
-  .mobile-backdrop {
-    display: block;
+  .mobile-drawer,
+  .mobile-backdrop-blur {
+    display: flex;
   }
 }
 
@@ -795,15 +922,6 @@
     font-size: 12.5px;
   }
 
-  .mobile-menu {
-    top: 64px;
-    max-height: calc(100vh - 64px);
-  }
-
-  .mobile-backdrop {
-    inset: 64px 0 0 0;
-  }
-
   .auth-actions .btn-nav.btn-outline {
     display: none;
   }
@@ -826,5 +944,107 @@
 
   .marketlink-footer {
     padding: 48px 20px 20px;
+  }
+
+  .mobile-drawer {
+    width: min(320px, 92vw);
+  }
+
+  .mobile-drawer-nav {
+    padding: 10px 10px 6px;
+  }
+
+  .mobile-drawer-link {
+    padding: 13px 12px;
+    font-size: 14.5px;
+  }
+
+  .mobile-drawer-head {
+    padding: 14px 16px;
+  }
+
+  .mobile-drawer-brand-name {
+    font-size: 16px;
+  }
+
+  .mobile-drawer-brand-tag {
+    display: none;
+  }
+}
+
+/* ============================================================
+   AI CHATBOT BUTTON — icon only, no background
+   ============================================================ */
+
+.ai-button {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: #194d26;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.ai-button:hover {
+  background: #eef4e8;
+  color: #143e1f;
+}
+
+.ai-button:active {
+  background: #dfe8dc;
+}
+
+/* ============================================================
+   MOBILE DRAWER AI BUTTON
+   ============================================================ */
+
+.mobile-drawer-ai {
+  padding: 0 14px 8px;
+}
+
+.mobile-drawer-ai-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #194d26;
+  border-radius: 12px;
+  background: #194d26;
+  color: #ffffff;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer-ai-btn:hover {
+  background: #143e1f;
+  border-color: #143e1f;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px -6px rgba(25, 77, 38, 0.35);
+}
+
+.mobile-drawer-ai-btn svg:first-child {
+  color: #6ee7b7;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .ai-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
   }
 }

@@ -15,6 +15,8 @@ import {
   OrderStatusChart,
   RatingsRadarChart,
   TopFarmersChart,
+  TopCategoriesChart,
+  AovChart,
 } from '../../components/dashboard/DashboardCharts';
 import '../../styles/dashboard.css';
 
@@ -22,6 +24,7 @@ const RANGES = [
   { key: '7', label: '7D' },
   { key: '30', label: '30D' },
   { key: '90', label: '90D' },
+  { key: '365', label: '1Y' },
 ];
 
 /* ============================================================
@@ -54,23 +57,18 @@ const cardPop = {
   }),
 };
 
-const rowIn = {
-  hidden: { opacity: 0, x: -10 },
-  visible: (i = 0) => ({
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.35, delay: 0.05 * i, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
 /* ============================================================
    PAGE
    ============================================================ */
 const FarmerDashboard = () => {
   const { user, isFarmer } = useAuth();
+
+  // KPI data
   const [data, setData] = useState(null);
-  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Analytics data
+  const [analytics, setAnalytics] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [range, setRange] = useState('30');
 
@@ -93,19 +91,25 @@ const FarmerDashboard = () => {
   /* ---------- Fetch analytics ---------- */
   useEffect(() => {
     if (!isFarmer) return;
+    let mounted = true;
+
     const fetchAnalytics = async () => {
       setAnalyticsLoading(true);
       try {
         const res = await farmerApi.getAnalytics({ range });
-        setAnalytics(res);
+        if (mounted) setAnalytics(res);
       } catch (error) {
         console.error('Error fetching analytics:', error);
-        setAnalytics(null);
+        if (mounted) setAnalytics(null);
       } finally {
-        setAnalyticsLoading(false);
+        if (mounted) setAnalyticsLoading(false);
       }
     };
     fetchAnalytics();
+
+    return () => {
+      mounted = false;
+    };
   }, [isFarmer, range]);
 
   /* ---------- Access guard ---------- */
@@ -125,7 +129,7 @@ const FarmerDashboard = () => {
     );
   }
 
-  /* ---------- Range toggle ---------- */
+  /* ---------- Range toggle (reused in chart header) ---------- */
   const RangeToggle = (
     <div className="chart-range">
       {RANGES.map((r) => (
@@ -171,12 +175,15 @@ const FarmerDashboard = () => {
             animate="visible"
             variants={stagger}
           >
-            <motion.h1 variants={fadeUp} className="dashboard-title">
+            <motion.p
+              variants={fadeUp}
+              className="dashboard-subtitle text-dark fw-bold"
+            >
               Welcome,{' '}
               {user?.farmer_profile?.stall_name || user?.username || 'Farmer'}
-            </motion.h1>
+            </motion.p>
             <motion.p variants={fadeUp} className="dashboard-subtitle">
-              Your farm business overview
+              Your farm business overview and sales insights
             </motion.p>
           </motion.div>
 
@@ -269,27 +276,22 @@ const FarmerDashboard = () => {
                 ))}
               </motion.div>
 
-              {/* ==================== ANALYTICS ==================== */}
+              {/* ==================== ANALYTICS SECTION ==================== */}
               <div className="section-divider">
-                <h2 className="section-title">Analytics</h2>
+                <p className="dashboard-subtitle text-dark fw-bold">
+                  Sales & Analytics
+                </p>
                 <p className="section-subtitle">
-                  Your sales and customer insights
+                  Your performance across products, orders, and reviews
                 </p>
               </div>
 
               {analyticsLoading ? (
                 <Loader message="Loading analytics..." />
               ) : analytics ? (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={stagger}
-                >
-                  {/* Row 1 — Revenue timeline */}
-                  <motion.div
-                    className="charts-grid"
-                    variants={fadeUp}
-                  >
+                <motion.div initial="hidden" animate="visible" variants={stagger}>
+                  {/* Row 1 — Revenue & Orders timeline */}
+                  <motion.div className="charts-grid" variants={fadeUp}>
                     <ChartCard
                       title="Revenue & Orders"
                       subtitle={`Last ${analytics.range} days`}
@@ -304,10 +306,7 @@ const FarmerDashboard = () => {
                   </motion.div>
 
                   {/* Row 2 — Order status + Ratings */}
-                  <motion.div
-                    className="charts-grid"
-                    variants={fadeUp}
-                  >
+                  <motion.div className="charts-grid" variants={fadeUp}>
                     <ChartCard
                       title="Order Status"
                       subtitle="Breakdown of your orders"
@@ -320,7 +319,7 @@ const FarmerDashboard = () => {
 
                     <ChartCard
                       title="Customer Ratings"
-                      subtitle="Review score distribution"
+                      subtitle="Reviews of your profile"
                     >
                       <RatingsRadarChart
                         data={analytics.ratings}
@@ -329,27 +328,53 @@ const FarmerDashboard = () => {
                     </ChartCard>
                   </motion.div>
 
-                  {/* Row 3 — Top products */}
-                  <motion.div
-                    className="charts-grid"
-                    variants={fadeUp}
-                  >
+                  {/* Row 3 — Top products + Top categories */}
+                  <motion.div className="charts-grid" variants={fadeUp}>
                     <ChartCard
                       title="Top Products"
                       subtitle="By number of reviews"
-                      span={2}
                     >
                       <TopFarmersChart
                         data={(analytics.top_products || []).map((p) => ({
                           name: p.name,
                           revenue: p.reviews_count || 0,
                         }))}
-                        height={280}
+                        height={320}
+                      />
+                    </ChartCard>
+
+                    <ChartCard
+                      title="Top Categories"
+                      subtitle="Your listings by category"
+                    >
+                      <TopCategoriesChart
+                        data={analytics.top_categories}
+                        height={320}
+                      />
+                    </ChartCard>
+                  </motion.div>
+
+                  {/* Row 4 — AOV timeline */}
+                  <motion.div className="charts-grid" variants={fadeUp}>
+                    <ChartCard
+                      title="Average Order Value"
+                      subtitle="Daily trend for completed orders"
+                      span={2}
+                    >
+                      <AovChart
+                        data={analytics.aov_timeline}
+                        height={260}
                       />
                     </ChartCard>
                   </motion.div>
                 </motion.div>
-              ) : null}
+              ) : (
+                <EmptyState
+                  icon="chart-bar"
+                  title="No Analytics Yet"
+                  message="Sales insights will appear once you have orders."
+                />
+              )}
 
               {/* ==================== BEST SELLING TABLE ==================== */}
               <motion.div
@@ -431,7 +456,7 @@ const FarmerDashboard = () => {
 
         </main>
       </div>
-      <Footer />
+ 
     </div>
   );
 };

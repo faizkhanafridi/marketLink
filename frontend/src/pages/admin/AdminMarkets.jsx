@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
+import LocationPicker from "../../components/common/LocationPicker";
 import { marketApi } from "../../api";
 import { toast } from "react-toastify";
 import "../../styles/dashboard.css";
 import "../../styles/forms.css";
 
 const AdminMarkets = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const [markets, setMarkets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingMarket, setEditingMarket] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     market_name: "",
     address: "",
@@ -24,6 +28,20 @@ const AdminMarkets = () => {
     map_provider: "openstreetmap",
   });
 
+  const formRef = useRef(null);
+
+  // URL-driven view state
+  const view = searchParams.get("view"); // 'add' | 'edit' | null
+  const editId = searchParams.get("id");
+  const showForm = view === "add" || view === "edit";
+  const editingMarket = editingMarketFromList(markets, editId, view);
+
+  function editingMarketFromList(list, id, view) {
+    if (view !== "edit" || !id) return null;
+    return list.find((m) => String(m.market_id) === String(id)) || null;
+  }
+
+  /* ---------- Fetch ---------- */
   const fetchMarkets = async () => {
     try {
       const data = await marketApi.getAll();
@@ -39,32 +57,60 @@ const AdminMarkets = () => {
     fetchMarkets();
   }, []);
 
-  const resetForm = () => {
-    setFormData({
-      market_name: "",
-      address: "",
-      latitude: "",
-      longitude: "",
-      operating_days: "",
-      timings: "",
-      map_provider: "openstreetmap",
-    });
-    setEditingMarket(null);
-    setShowForm(false);
+  /* ---------- Sync formData with URL ---------- */
+  useEffect(() => {
+    if (view === "add") {
+      setFormData({
+        market_name: "",
+        address: "",
+        latitude: "",
+        longitude: "",
+        operating_days: "",
+        timings: "",
+        map_provider: "openstreetmap",
+      });
+      // Scroll the form into view
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+      return;
+    }
+
+    if (view === "edit" && editId) {
+      const found = markets.find((m) => String(m.market_id) === String(editId));
+      if (found) {
+        setFormData({
+          market_name: found.market_name || "",
+          address: found.address || "",
+          latitude: found.latitude || "",
+          longitude: found.longitude || "",
+          operating_days: found.operating_days || "",
+          timings: found.timings || "",
+          map_provider: found.map_provider || "openstreetmap",
+        });
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+      return;
+    }
+    // No form open
+  }, [view, editId, markets]);
+
+  /* ---------- Handlers ---------- */
+  const handleOpenAdd = () => {
+    navigate("/admin/markets?view=add");
   };
 
-  const handleEdit = (market) => {
-    setFormData({
-      market_name: market.market_name || "",
-      address: market.address || "",
-      latitude: market.latitude || "",
-      longitude: market.longitude || "",
-      operating_days: market.operating_days || "",
-      timings: market.timings || "",
-      map_provider: market.map_provider || "openstreetmap",
-    });
-    setEditingMarket(market);
-    setShowForm(true);
+  const handleOpenEdit = (market) => {
+    navigate(`/admin/markets?view=edit&id=${market.market_id}`);
+  };
+
+  const handleCloseForm = () => {
+    navigate("/admin/markets");
   };
 
   const handleChange = (e) => {
@@ -87,7 +133,8 @@ const AdminMarkets = () => {
         await marketApi.create(payload);
         toast.success("Market created");
       }
-      resetForm();
+
+      navigate("/admin/markets");
       fetchMarkets();
     } catch (error) {
       const errors = error.response?.data?.errors;
@@ -103,12 +150,15 @@ const AdminMarkets = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this market?")) return;
+    setDeletingId(id);
     try {
       await marketApi.delete(id);
       toast.success("Market deleted");
       fetchMarkets();
     } catch (error) {
       toast.error("Failed to delete market");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -118,34 +168,51 @@ const AdminMarkets = () => {
       <div className="dashboard-layout">
         <AdminSidebar />
         <main className="dashboard-main">
+          {/* ---------- Header ---------- */}
           <div className="dashboard-header-row">
             <div>
-              <p className="dashboard-subtitle text-dark fw-bold ">Manager Markerts</p>
-              <p className="dashboard-subtitle ">
-                Add, edit, or remove farmers markets
+              <p className="dashboard-subtitle text-dark fw-bold">
+                {view === "add"
+                  ? "Add Market"
+                  : view === "edit"
+                    ? "Edit Market"
+                    : "Manage Markets"}
+              </p>
+              <p className="dashboard-subtitle">
+                {view === "add"
+                  ? "Create a new farmers market"
+                  : view === "edit"
+                    ? "Update this market's details"
+                    : "Add, edit, or remove farmers markets"}
               </p>
             </div>
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-            >
-              <i className="fas fa-plus"></i> Add Market
-            </button>
+
+            <div className="header-actions">
+              {!showForm && (
+                <button className="btn btn-primary" onClick={handleOpenAdd}>
+                  <i className="fas fa-plus"></i> Add Market
+                </button>
+              )}
+              {showForm && (
+                <button className="btn btn-outline" onClick={handleCloseForm}>
+                  <i className="fas fa-arrow-left"></i> Back
+                </button>
+              )}
+            </div>
           </div>
 
+          {/* ---------- Inline form ---------- */}
           {showForm && (
-            <div className="dashboard-card">
+            <div className="dashboard-card" ref={formRef}>
               <div className="card-header-row">
                 <h3 className="card-title">
                   {editingMarket ? "Edit Market" : "Add New Market"}
                 </h3>
-                <button className="btn-close-sm" onClick={resetForm}>
+                <button className="btn-close-sm" onClick={handleCloseForm}>
                   <i className="fas fa-times"></i>
                 </button>
               </div>
+
               <form onSubmit={handleSubmit} className="product-form">
                 <div className="form-row">
                   <div className="form-group">
@@ -182,32 +249,21 @@ const AdminMarkets = () => {
                     value={formData.address}
                     onChange={handleChange}
                     required
+                    placeholder="Street, area, city"
                   />
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Latitude</label>
-                    <input
-                      type="number"
-                      step="any"
-                      name="latitude"
-                      className="form-control"
-                      value={formData.latitude}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Longitude</label>
-                    <input
-                      type="number"
-                      step="any"
-                      name="longitude"
-                      className="form-control"
-                      value={formData.longitude}
-                      onChange={handleChange}
-                    />
-                  </div>
+                <div className="form-group">
+                  <label className="form-label">Location on Map</label>
+                  <LocationPicker
+                    latitude={formData.latitude}
+                    longitude={formData.longitude}
+                    address={formData.address}
+                    onChange={(updates) =>
+                      setFormData((prev) => ({ ...prev, ...updates }))
+                    }
+                    height={340}
+                  />
                 </div>
 
                 <div className="form-row">
@@ -239,75 +295,127 @@ const AdminMarkets = () => {
                   <button
                     type="button"
                     className="btn btn-outline"
-                    onClick={resetForm}
+                    onClick={handleCloseForm}
                   >
                     Cancel
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    {editingMarket ? "Update" : "Create"}
+                    <i className="fas fa-check"></i>{" "}
+                    {editingMarket ? "Update Market" : "Create Market"}
                   </button>
                 </div>
               </form>
             </div>
           )}
 
-          {loading ? (
-            <Loader message="Loading markets..." />
-          ) : markets.length === 0 ? (
-            <EmptyState
-              icon="store"
-              title="No Markets Yet"
-              message="Add your first market to get started."
-              actionText="Add Market"
-              onAction={() => setShowForm(true)}
-            />
-          ) : (
-            <div className="dashboard-card">
-              <div className="table-responsive">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Market Name</th>
-                      <th>Address</th>
-                      <th>Operating Days</th>
-                      <th>Timings</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {markets.map((m) => (
-                      <tr key={m.market_id}>
-                        <td>{m.market_name}</td>
-                        <td>{m.address}</td>
-                        <td>{m.operating_days || "-"}</td>
-                        <td>{m.timings || "-"}</td>
-                        <td>
-                          <div className="table-actions">
-                            <button
-                              className="action-btn edit"
-                              onClick={() => handleEdit(m)}
-                              title="Edit"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </button>
-                            <button
-                              className="action-btn delete"
-                              onClick={() => handleDelete(m.market_id)}
-                              title="Delete"
-                            >
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          {/* ---------- Table ---------- */}
+          {!showForm && (
+            <>
+              {loading ? (
+                <Loader message="Loading markets..." />
+              ) : markets.length === 0 ? (
+                <EmptyState
+                  icon="store"
+                  title="No Markets Yet"
+                  message="Add your first market to get started."
+                  actionText="Add Market"
+                  onAction={handleOpenAdd}
+                />
+              ) : (
+                <div className="dashboard-card">
+                  <div className="table-responsive">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Market Name</th>
+                          <th>Address</th>
+                          <th>Operating Days</th>
+                          <th>Timings</th>
+                          <th className="actions-col">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {markets.map((m) => (
+                          <tr key={m.market_id}>
+                            <td>
+                              <div className="market-name-cell">
+                                <div className="market-icon">
+                                  <i className="fas fa-store"></i>
+                                </div>
+                                <span>{m.market_name}</span>
+                              </div>
+                            </td>
+                            <td>
+                              {m.address ? (
+                                <span className="address-cell">
+                                  <i className="fas fa-map-marker-alt"></i>
+                                  {m.address.length > 45
+                                    ? m.address.slice(0, 45) + "…"
+                                    : m.address}
+                                </span>
+                              ) : (
+                                <span className="text-muted">—</span>
+                              )}
+                            </td>
+                            <td>
+                              {m.operating_days ? (
+                                <span className="chip chip-muted">
+                                  {m.operating_days}
+                                </span>
+                              ) : (
+                                <span className="text-muted">—</span>
+                              )}
+                            </td>
+                            <td>
+                              {m.timings ? (
+                                <span className="timing-cell">
+                                  <i className="fas fa-clock"></i>
+                                  {m.timings}
+                                </span>
+                              ) : (
+                                <span className="text-muted">—</span>
+                              )}
+                            </td>
+                            <td>
+                              <div className="table-actions-modern">
+                                <button
+                                  type="button"
+                                  className="action-pill action-pill-edit"
+                                  onClick={() => handleOpenEdit(m)}
+                                  title="Edit market"
+                                  aria-label="Edit market"
+                                >
+                                  <i className="fas fa-pen"></i>
+                                  <span>Edit</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="action-pill action-pill-delete"
+                                  onClick={() => handleDelete(m.market_id)}
+                                  title="Delete market"
+                                  aria-label="Delete market"
+                                  disabled={deletingId === m.market_id}
+                                >
+                                  {deletingId === m.market_id ? (
+                                    <i className="fas fa-spinner fa-spin"></i>
+                                  ) : (
+                                    <i className="fas fa-trash-alt"></i>
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
+      <Footer />
     </div>
   );
 };

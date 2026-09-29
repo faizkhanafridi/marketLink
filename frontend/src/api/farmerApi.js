@@ -1,8 +1,8 @@
-import axiosInstance from './axiosConfig';
+import axiosInstance from "./axiosConfig";
 
 export const farmerApi = {
   getAll: async () => {
-    const response = await axiosInstance.get('/farmers');
+    const response = await axiosInstance.get("/farmers");
     return response.data;
   },
 
@@ -12,12 +12,12 @@ export const farmerApi = {
   },
 
   updateProfile: async (profileData) => {
-    const response = await axiosInstance.put('/farmer/profile', profileData);
+    const response = await axiosInstance.put("/farmer/profile", profileData);
     return response.data;
   },
 
   getDashboard: async () => {
-    const response = await axiosInstance.get('/farmer/dashboard');
+    const response = await axiosInstance.get("/farmer/dashboard");
     return response.data;
   },
 
@@ -26,6 +26,21 @@ export const farmerApi = {
     return response.data;
   },
 
-    getAnalytics: (params) => axiosInstance.get('/farmer/analytics', { params }),
+  getAnalytics: async ({ range = 30 } = {}) => {
+    const response = await axiosInstance.get("/farmer/analytics", {
+      params: { range },
+    });
+    return response.data;
+  },
+  getSales: async ({ range = 30 } = {}) => {
+    const response = await axiosInstance.get("/farmer/sales", {
+      params: { range },
+    });
+    return response.data;
+  },
 
+  getMyProducts: async () => {
+  const response = await axiosInstance.get('/farmer/products');
+  return response.data;
+},
 };

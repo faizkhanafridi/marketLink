@@ -3,12 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NotificationProvider } from './context/NotificationContext';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { FlyToCartProvider } from './context/FlyToCartContext'; 
-import ProtectedRoute from './components/common/ProtectedRoute';
-import FlyToCartLayer from './components/common/FlyToCartLayer';  
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
+import { FlyToCartProvider } from "./context/FlyToCartContext";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import FlyToCartLayer from "./components/common/FlyToCartLayer";
 
 // Public Pages
 import HomePage from './pages/public/HomePage';
@@ -22,39 +26,50 @@ import ProductsPage from './pages/public/ProductsPage';
 import ProductDetailPage from './pages/public/ProductDetailPage';
 import NotificationsPage from './components/common/NotificationsPage';
 import AdminNotifications from './pages/admin/AdminNotifications';
+import HomePage from "./pages/public/HomePage";
+import AboutPage from "./pages/public/AboutPage";
+import ContactPage from "./pages/public/ContactPage";
+import MarketsPage from "./pages/public/MarketsPage";
+import MarketDetailPage from "./pages/public/MarketDetailPage";
+import FarmersPage from "./pages/public/FarmersPage";
+import FarmerDetailPage from "./pages/public/FarmerDetailPage";
+import ProductsPage from "./pages/public/ProductsPage";
+import ProductDetailPage from "./pages/public/ProductDetailPage";
 
 // Auth Pages
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import FarmerRegisterPage from './pages/auth/FarmerRegisterPage';
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import FarmerRegisterPage from "./pages/auth/FarmerRegisterPage";
 
 // Customer Pages
-import CustomerDashboard from './pages/customer/CustomerDashboard';
-import CartPage from './pages/customer/CartPage';
-import CheckoutPage from './pages/customer/CheckoutPage';
-import MyOrdersPage from './pages/customer/MyOrdersPage';
-import OrderDetailPage from './pages/customer/OrderDetailPage';
-import FavoritesPage from './pages/customer/FavoritesPage';
-import ProfilePage from './pages/customer/ProfilePage';
+import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import CartPage from "./pages/customer/CartPage";
+import CheckoutPage from "./pages/customer/CheckoutPage";
+import MyOrdersPage from "./pages/customer/MyOrdersPage";
+import OrderDetailPage from "./pages/customer/OrderDetailPage";
+import FavoritesPage from "./pages/customer/FavoritesPage";
+import ProfilePage from "./pages/customer/ProfilePage";
 
 // Farmer Pages
-import FarmerDashboard from './pages/farmer/FarmerDashboard';
-import FarmerProducts from './pages/farmer/FarmerProducts';
-import FarmerOrders from './pages/farmer/FarmerOrders';
-import FarmerReviews from './pages/farmer/FarmerReviews';
-import FarmerProfile from './pages/farmer/FarmerProfile';
+import FarmerDashboard from "./pages/farmer/FarmerDashboard";
+import FarmerProducts from "./pages/farmer/FarmerProducts";
+import FarmerOrders from "./pages/farmer/FarmerOrders";
+import FarmerReviews from "./pages/farmer/FarmerReviews";
+import FarmerProfile from "./pages/farmer/FarmerProfile";
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminMarkets from './pages/admin/AdminMarkets';
-import AdminCategories from './pages/admin/AdminCategories';
-import AdminReviews from './pages/admin/AdminReviews';
-import AdminReports from './pages/admin/AdminReports';
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminMarkets from "./pages/admin/AdminMarkets";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminReviews from "./pages/admin/AdminReviews";
+import AdminReports from "./pages/admin/AdminReports";
 
-import './App.css';
-import NotFoundPage from './pages/public/NotFoundPage';
-import AdminProducts from './pages/admin/AdminProducts';
+import "./App.css";
+import NotFoundPage from "./pages/public/NotFoundPage";
+import AdminProducts from "./pages/admin/AdminProducts";
+import FarmerSales from "./pages/farmer/FarmerSales";
+import ChatBot from "./components/customer/ChatBot";
 
 function App() {
   return (
@@ -62,7 +77,7 @@ function App() {
       <AuthProvider>
         <NotificationProvider>
         <CartProvider>
-          <FlyToCartProvider>                              
+          <FlyToCartProvider>
             <div className="app-container">
               <Routes>
                 {/* Public Routes */}
@@ -79,13 +94,16 @@ function App() {
                 {/* Auth Routes */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                <Route path="/register/farmer" element={<FarmerRegisterPage />} />
+                <Route
+                  path="/register/farmer"
+                  element={<FarmerRegisterPage />}
+                />
 
                 {/* Customer Routes */}
                 <Route
                   path="/customer"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <CustomerDashboard />
                     </ProtectedRoute>
                   }
@@ -93,7 +111,7 @@ function App() {
                 <Route
                   path="/customer/cart"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <CartPage />
                     </ProtectedRoute>
                   }
@@ -101,7 +119,7 @@ function App() {
                 <Route
                   path="/customer/checkout"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <CheckoutPage />
                     </ProtectedRoute>
                   }
@@ -109,7 +127,7 @@ function App() {
                 <Route
                   path="/customer/orders"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <MyOrdersPage />
                     </ProtectedRoute>
                   }
@@ -117,7 +135,7 @@ function App() {
                 <Route
                   path="/customer/orders/:id"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <OrderDetailPage />
                     </ProtectedRoute>
                   }
@@ -125,7 +143,7 @@ function App() {
                 <Route
                   path="/customer/favorites"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <FavoritesPage />
                     </ProtectedRoute>
                   }
@@ -133,7 +151,7 @@ function App() {
                 <Route
                   path="/customer/profile"
                   element={
-                    <ProtectedRoute allowedRoles={['customer']}>
+                    <ProtectedRoute allowedRoles={["customer"]}>
                       <ProfilePage />
                     </ProtectedRoute>
                   }
@@ -143,15 +161,23 @@ function App() {
                 <Route
                   path="/farmer"
                   element={
-                    <ProtectedRoute allowedRoles={['farmer']}>
+                    <ProtectedRoute allowedRoles={["farmer"]}>
                       <FarmerDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/farmer/sales"
+                  element={
+                    <ProtectedRoute allowedRoles={["farmer"]}>
+                      <FarmerSales />
                     </ProtectedRoute>
                   }
                 />
                 <Route
                   path="/farmer/products"
                   element={
-                    <ProtectedRoute allowedRoles={['farmer']}>
+                    <ProtectedRoute allowedRoles={["farmer"]}>
                       <FarmerProducts />
                     </ProtectedRoute>
                   }
@@ -159,7 +185,7 @@ function App() {
                 <Route
                   path="/farmer/orders"
                   element={
-                    <ProtectedRoute allowedRoles={['farmer']}>
+                    <ProtectedRoute allowedRoles={["farmer"]}>
                       <FarmerOrders />
                     </ProtectedRoute>
                   }
@@ -167,7 +193,7 @@ function App() {
                 <Route
                   path="/farmer/reviews"
                   element={
-                    <ProtectedRoute allowedRoles={['farmer']}>
+                    <ProtectedRoute allowedRoles={["farmer"]}>
                       <FarmerReviews />
                     </ProtectedRoute>
                   }
@@ -175,7 +201,7 @@ function App() {
                 <Route
                   path="/farmer/profile"
                   element={
-                    <ProtectedRoute allowedRoles={['farmer']}>
+                    <ProtectedRoute allowedRoles={["farmer"]}>
                       <FarmerProfile />
                     </ProtectedRoute>
                   }
@@ -185,7 +211,7 @@ function App() {
                 <Route
                   path="/admin"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminDashboard />
                     </ProtectedRoute>
                   }
@@ -193,7 +219,7 @@ function App() {
                 <Route
                   path="/admin/users"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminUsers />
                     </ProtectedRoute>
                   }
@@ -201,7 +227,7 @@ function App() {
                 <Route
                   path="/admin/markets"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminMarkets />
                     </ProtectedRoute>
                   }
@@ -209,16 +235,16 @@ function App() {
                 <Route
                   path="/admin/categories"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminCategories />
                     </ProtectedRoute>
                   }
                 />
 
-                 <Route
+                <Route
                   path="/admin/products"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminProducts />
                     </ProtectedRoute>
                   }
@@ -226,7 +252,7 @@ function App() {
                 <Route
                   path="/admin/reviews"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminReviews />
                     </ProtectedRoute>
                   }
@@ -234,7 +260,7 @@ function App() {
                 <Route
                   path="/admin/reports"
                   element={
-                    <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminReports />
                     </ProtectedRoute>
                   }
@@ -243,12 +269,13 @@ function App() {
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="/admin/notifications" element={<AdminNotifications />} />
               </Routes>
+        <ChatBot />
 
-              <FlyToCartLayer />                          
+              <FlyToCartLayer />
 
               <ToastContainer position="top-right" autoClose={3000} />
             </div>
-          </FlyToCartProvider>                           
+          </FlyToCartProvider>
         </CartProvider>
         </NotificationProvider>
       </AuthProvider>

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import Navbar from '../../components/common/Navbar';
-import Footer from '../../components/common/Footer';
-import CustomerSidebar from '../../components/customer/CustomerSidebar';
-import Loader from '../../components/common/Loader';
-import EmptyState from '../../components/common/EmptyState';
-import { orderApi } from '../../api';
-import { formatCurrency, formatDate } from '../../utils/formatters';
-import '../../styles/dashboard.css';
+import React, { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
+import CustomerSidebar from "../../components/customer/CustomerSidebar";
+import Loader from "../../components/common/Loader";
+import EmptyState from "../../components/common/EmptyState";
+import { orderApi } from "../../api";
+import { formatCurrency, formatDate } from "../../utils/formatters";
+import "../../styles/dashboard.css";
 
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -15,7 +15,7 @@ const MyOrdersPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   //  URL se status uthao, warna 'all'
-  const filter = searchParams.get('status') || 'all';
+  const filter = searchParams.get("status") || "all";
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -23,7 +23,7 @@ const MyOrdersPage = () => {
         const data = await orderApi.getAll();
         setOrders(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error("Error fetching orders:", error);
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,7 @@ const MyOrdersPage = () => {
   }, []);
 
   const handleFilterChange = (key) => {
-    if (key === 'all') {
+    if (key === "all") {
       setSearchParams({});
     } else {
       setSearchParams({ status: key });
@@ -40,17 +40,15 @@ const MyOrdersPage = () => {
   };
 
   const filteredOrders =
-    filter === 'all'
-      ? orders
-      : orders.filter((o) => o.order_status === filter);
+    filter === "all" ? orders : orders.filter((o) => o.order_status === filter);
 
   const statusTabs = [
-    { key: 'all', label: 'All' },
-    { key: 'placed', label: 'Placed' },
-    { key: 'accepted', label: 'Accepted' },
-    { key: 'ready_for_pickup', label: 'Ready' },
-    { key: 'completed', label: 'Completed' },
-    { key: 'cancelled', label: 'Cancelled' },
+    { key: "all", label: "All" },
+    { key: "placed", label: "Placed" },
+    { key: "accepted", label: "Accepted" },
+    { key: "ready_for_pickup", label: "Ready" },
+    { key: "completed", label: "Completed" },
+    { key: "cancelled", label: "Cancelled" },
   ];
 
   return (
@@ -60,7 +58,8 @@ const MyOrdersPage = () => {
         <CustomerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">My Orders</h1>
+            <p className="dashboard-subtitle text-dark fw-bold ">My Orders</p>
+
             <p className="dashboard-subtitle">Track and manage your orders</p>
           </div>
 
@@ -68,7 +67,7 @@ const MyOrdersPage = () => {
             {statusTabs.map((tab) => (
               <button
                 key={tab.key}
-                className={`filter-tab ${filter === tab.key ? 'active' : ''}`}
+                className={`filter-tab ${filter === tab.key ? "active" : ""}`}
                 onClick={() => handleFilterChange(tab.key)}
               >
                 {tab.label}
@@ -84,7 +83,7 @@ const MyOrdersPage = () => {
               title="No Orders Found"
               message="You haven't placed any orders yet."
               actionText="Browse Products"
-              onAction={() => (window.location.href = '/products')}
+              onAction={() => (window.location.href = "/products")}
             />
           ) : (
             <div className="orders-list">
@@ -100,14 +99,14 @@ const MyOrdersPage = () => {
                     <span
                       className={`status-badge status-${order.order_status}`}
                     >
-                      {order.order_status?.replace(/_/g, ' ')}
+                      {order.order_status?.replace(/_/g, " ")}
                     </span>
                   </div>
 
                   <div className="order-body">
                     <div className="order-farmer">
                       <i className="fas fa-tractor"></i>
-                      {order.farmer?.stall_name || 'Farmer'}
+                      {order.farmer?.stall_name || "Farmer"}
                     </div>
                     <div className="order-items-preview">
                       {order.items?.slice(0, 3).map((item, idx) => (
@@ -129,7 +128,7 @@ const MyOrdersPage = () => {
 
                   <div className="order-footer">
                     <div className="order-pickup">
-                      <i className="fas fa-calendar"></i> {order.pickup_date} |{' '}
+                      <i className="fas fa-calendar"></i> {order.pickup_date} |{" "}
                       {order.pickup_slot}
                     </div>
                     <Link

@@ -40,7 +40,7 @@ const ProfilePage = () => {
         <CustomerSidebar />
         <main className="dashboard-main">
           <div className="dashboard-header">
-            <h1 className="dashboard-title">My Profile</h1>
+              <p className="dashboard-subtitle text-dark fw-bold ">My Profile</p>
             <p className="dashboard-subtitle">Manage your account information</p>
           </div>
 
