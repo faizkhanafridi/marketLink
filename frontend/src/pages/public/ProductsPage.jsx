@@ -5,10 +5,10 @@ import { X } from "lucide-react";
 
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
-import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ProductCard from "../../components/common/ProductCard";
 import Pagination from "../../components/common/Pagination";
+import { SkeletonProductGrid } from "../../components/common/SkeletonCard";
 
 import { productApi, categoryApi, farmerApi, marketApi } from "../../api";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -78,6 +78,7 @@ const ProductsPage = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [farmerLabel, setFarmerLabel] = useState("");
   const [marketLabel, setMarketLabel] = useState("");
@@ -163,7 +164,8 @@ const ProductsPage = () => {
         if (filters.market_id) params.market_id = filters.market_id;
         if (filters.min_price) params.min_price = filters.min_price;
         if (filters.max_price) params.max_price = filters.max_price;
-        if (filters.is_available !== "") params.is_available = filters.is_available;
+        if (filters.is_available !== "")
+          params.is_available = filters.is_available;
 
         const response = await productApi.getAll(params);
         if (!isMounted) return;
@@ -190,7 +192,10 @@ const ProductsPage = () => {
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setInitialLoading(false);
+        }
       }
     };
 
@@ -281,58 +286,11 @@ const ProductsPage = () => {
   return (
     <div className="products-page">
       <Navbar />
-
-      {/* =========================================================
-          HERO
-      ========================================================= */}
-      <section className="products-hero">
-        <motion.div
-          className="products-hero-decoration products-hero-decoration-one"
-          variants={floatingDecoration}
-          animate="animate"
-        />
-        <motion.div
-          className="products-hero-decoration products-hero-decoration-two"
-          variants={floatingDecoration}
-          animate="animate"
-          transition={{ duration: 8, delay: 1 }}
-        />
-
-        <div className="container">
-          <motion.div
-            className="products-hero-content"
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-          >
-            <motion.span variants={fadeUp} className="products-page-tag">
-              <motion.i
-                className="fas fa-leaf"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 2 }}
-              />
-              Fresh from local farmers
-            </motion.span>
-
-            <motion.h1 variants={fadeUp} className="products-page-title">
-              Browse Fresh
-              <span> Foods</span>
-            </motion.h1>
-
-            <motion.p variants={fadeUp} className="products-page-subtitle">
-              Discover seasonal fruits, vegetables, dairy, baked goods, honey,
-              and other products from farmers in your community.
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
       {/* =========================================================
           PRODUCTS CONTENT
       ========================================================= */}
       <section className="products-content-section">
         <div className="container">
-
           {/* Active context pills (farmer/market/sold-out) */}
           {showContextPills && (
             <div className="active-filters">
@@ -546,16 +504,16 @@ const ProductsPage = () => {
             </motion.div>
 
             <AnimatePresence mode="wait">
-              {loading ? (
+              {/* Initial load → skeleton grid */}
+              {initialLoading ? (
                 <motion.div
-                  key="loading"
-                  className="products-loading"
+                  key="skeleton"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <Loader message="Loading products..." />
+                  <SkeletonProductGrid count={12} />
                 </motion.div>
               ) : products.length === 0 ? (
                 <motion.div
@@ -580,6 +538,11 @@ const ProductsPage = () => {
                   initial="hidden"
                   animate="visible"
                   variants={stagger}
+                  style={{
+                    opacity: loading ? 0.55 : 1,
+                    pointerEvents: loading ? "none" : "auto",
+                    transition: "opacity 0.2s ease",
+                  }}
                 >
                   <div className="products-grid">
                     {products.map((product, i) => (

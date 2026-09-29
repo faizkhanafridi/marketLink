@@ -1,0 +1,123 @@
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+
+@keyframes skShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.sk-image,
+.sk-line,
+.sk-btn,
+.sk-avatar {
+  background-color: #ece8e0;
+  background-image: linear-gradient(
+    90deg,
+    #ece8e0 0%,
+    #f5f2ec 50%,
+    #ece8e0 100%
+  );
+  background-size: 400px 100%;
+  background-repeat: no-repeat;
+  animation: skShimmer 1.4s linear infinite;
+  border-radius: 6px;
+}
+
+/* ---------- Product card skeleton ---------- */
+.sk-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #ebe8e2;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.sk-image {
+  width: 100%;
+  height: 170px;
+  border-radius: 0;
+}
+
+.sk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px 16px 16px;
+}
+
+.sk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sk-row-bottom {
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.sk-cat         { width: 70px; height: 16px; border-radius: 5px; }
+.sk-rating      { width: 36px; height: 14px; }
+.sk-title       { width: 100%; height: 14px; }
+.sk-title-short { width: 65%; }
+.sk-farmer      { width: 55%; height: 12px; }
+.sk-price       { width: 60px; height: 18px; }
+.sk-stock       { width: 55px; height: 12px; }
+
+.sk-btn {
+  width: 100%;
+  height: 38px;
+  border-radius: 9px;
+  margin-top: 4px;
+}
+
+/* ---------- Farmer card skeleton ---------- */
+.sk-farmer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  background: #ffffff;
+  border: 1px solid #ebe8e2;
+  border-radius: 14px;
+}
+
+.sk-farmer-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sk-avatar {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+.sk-farmer-head-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sk-farmer-name        { width: 65%; height: 16px; }
+.sk-farmer-contact     { width: 45%; height: 12px; }
+.sk-farmer-desc        { width: 100%; height: 12px; }
+.sk-farmer-desc-short  { width: 70%; }
+.sk-farmer-meta        { width: 55%; height: 12px; }
+
+.sk-btn-farmer {
+  margin-top: 8px;
+  height: 36px;
+  border-radius: 9px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+  .sk-image { height: 150px; }
+}
