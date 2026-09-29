@@ -11,20 +11,14 @@ import {
   Menu,
   X,
   User,
-} from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import { useCart } from '../../hooks/useCart';
-import Logo from './Logo';
-import NotificationBell from './NotificationBell';
-import '../../styles/navbar.css';
-  ArrowRight,
-  Sprout,
-  Sparkles,
   Bot,
+  Sprout,
+  ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
 import Logo from "./Logo";
+import NotificationBell from "./NotificationBell";
 import "../../styles/navbar.css";
 
 const NAV_ITEMS = [
@@ -88,14 +82,14 @@ const Navbar = () => {
 
   const cartCount = getCartCount ? getCartCount() : 0;
 
-  /* ---------- AI chatbot: only for logged-in customers ---------- */
+  /* AI chatbot — only for logged-in customers */
   const showChatbot = isAuthenticated && user?.role === "customer";
 
   const openChatbot = () => {
     window.dispatchEvent(new CustomEvent("toggleChatbot"));
   };
 
-  /* ---------- Desktop animation variants ---------- */
+  /* ---------- Animation variants ---------- */
   const navVariants = {
     hidden: { y: -80, opacity: 0 },
     visible: {
@@ -140,7 +134,6 @@ const Navbar = () => {
     },
   };
 
-  /* ---------- Mobile drawer animation variants ---------- */
   const drawerVariants = {
     hidden: { x: "100%" },
     visible: {
@@ -193,66 +186,6 @@ const Navbar = () => {
               className="navbar-brand"
               onClick={() => setMobileOpen(false)}
             >
-              <Logo size={42} />
-            </motion.div>
-            <div className="brand-text">
-              <span className="brand-name">
-                <span className="brand-name-primary">Market</span>
-                <span className="brand-name-accent">Link</span>
-              </span>
-              <span className="brand-tagline">eGreen Basket</span>
-            </div>
-          </Link>
-        </motion.div>
-
-        {/* ===== DESKTOP NAV ===== */}
-        <motion.div
-          className="navbar-menu"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {['Home', 'Products', 'Markets', 'Farmers', 'About', 'Contact'].map((item) => {
-            const path = item === 'Home' ? '/' : `/${item.toLowerCase()}`;
-            return (
-              <motion.div key={item} variants={itemVariants}>
-                <NavLink to={path} end={item === 'Home'} className="nav-link">
-                  {item}
-                </NavLink>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* ===== ACTIONS ===== */}
-        <motion.div
-          className="navbar-actions"
-          variants={authVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {isAuthenticated ? (
-            <>
-              {/* Notification bell — added next to cart */}
-              <NotificationBell />
-
-              {user?.role === 'customer' && (
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <Link to="/customer/cart" className="cart-button" aria-label="Basket">
-                    <ShoppingBag size={19} strokeWidth={2} />
-                    {cartCount > 0 && (
-                      <motion.span
-                        className="cart-badge"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                      >
-                        {cartCount}
-                      </motion.span>
-                    )}
-                  </Link>
-                </motion.div>
-              )}
               <motion.div
                 className="brand-logo"
                 whileHover={{ rotate: -6, scale: 1.08 }}
@@ -295,6 +228,10 @@ const Navbar = () => {
           >
             {isAuthenticated ? (
               <>
+                {/* Notification bell */}
+                <NotificationBell />
+
+                {/* Cart — customers only */}
                 {user?.role === "customer" && (
                   <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -324,21 +261,22 @@ const Navbar = () => {
                   </motion.div>
                 )}
 
-                {/* ===== AI CHATBOT BUTTON — customers only ===== */}
-              {/* ===== AI CHATBOT BUTTON — customers only ===== */}
-{showChatbot && (
-  <motion.button
-    type="button"
-    className="ai-button"
-    onClick={openChatbot}
-    aria-label="Open AI assistant"
-    title="Ask MarketLink AI"
-    whileHover={{ scale: 1.08 }}
-    whileTap={{ scale: 0.94 }}
-  >
-    <Bot size={19} strokeWidth={2} />
-  </motion.button>
-)}
+                {/* AI chatbot — customers only */}
+                {showChatbot && (
+                  <motion.button
+                    type="button"
+                    className="ai-button"
+                    onClick={openChatbot}
+                    aria-label="Open AI assistant"
+                    title="Ask MarketLink AI"
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.94 }}
+                  >
+                    <Bot size={19} strokeWidth={2} />
+                  </motion.button>
+                )}
+
+                {/* User menu */}
                 <div className="user-menu-wrapper">
                   <motion.button
                     type="button"
@@ -386,7 +324,10 @@ const Navbar = () => {
                           </span>
                         </div>
 
-                        <Link to={getDashboardLink()} className="dropdown-item">
+                        <Link
+                          to={getDashboardLink()}
+                          className="dropdown-item"
+                        >
                           <LayoutDashboard size={15} />
                           <span>Dashboard</span>
                         </Link>
@@ -578,22 +519,6 @@ const Navbar = () => {
                   </motion.div>
                 ))}
               </motion.nav>
-
-              {/* AI Chatbot CTA — customers only */}
-              {/* ===== AI CHATBOT BUTTON — customers only ===== */}
-              {showChatbot && (
-                <motion.button
-                  type="button"
-                  className="ai-button"
-                  onClick={openChatbot}
-                  aria-label="Open AI assistant"
-                  title="Ask MarketLink AI"
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.94 }}
-                >
-                  <Bot size={19} strokeWidth={2} />
-                </motion.button>
-              )}
 
               {!isAuthenticated && (
                 <motion.div

@@ -3,10 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NotificationProvider } from './context/NotificationContext';
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -26,15 +23,7 @@ import ProductsPage from './pages/public/ProductsPage';
 import ProductDetailPage from './pages/public/ProductDetailPage';
 import NotificationsPage from './components/common/NotificationsPage';
 import AdminNotifications from './pages/admin/AdminNotifications';
-import HomePage from "./pages/public/HomePage";
-import AboutPage from "./pages/public/AboutPage";
-import ContactPage from "./pages/public/ContactPage";
-import MarketsPage from "./pages/public/MarketsPage";
-import MarketDetailPage from "./pages/public/MarketDetailPage";
-import FarmersPage from "./pages/public/FarmersPage";
-import FarmerDetailPage from "./pages/public/FarmerDetailPage";
-import ProductsPage from "./pages/public/ProductsPage";
-import ProductDetailPage from "./pages/public/ProductDetailPage";
+
 
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
