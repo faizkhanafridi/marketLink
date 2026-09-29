@@ -916,6 +916,56 @@
   box-shadow: 0 0 0 3px rgba(196, 122, 10, 0.15);
 }
 
+/* ---------- Active filter pills ---------- */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.active-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 12px;
+  background: #eef4e8;
+  border: 1px solid #dfe8dc;
+  border-radius: 999px;
+  color: #194d26;
+  font-family: var(--font-primary, "DM Sans", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.active-filter-pill > span {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.active-filter-pill button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(25, 77, 38, 0.12);
+  color: #194d26;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.active-filter-pill button:hover {
+  background: #194d26;
+  color: #ffffff;
+}
+
 /* ============================================================
    FILTER BAR — RESPONSIVE
    ============================================================ */

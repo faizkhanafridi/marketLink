@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -34,6 +34,7 @@ import "../../styles/home.css";
 import { AuthContext } from "../../context/AuthContext";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const { isAuthenticated, isFarmer, isCustomer, isAdmin } =
     useContext(AuthContext);
 
@@ -61,20 +62,16 @@ const HomePage = () => {
           marketApi.getAll(),
         ]);
 
-        // -------- Products --------
         const data = productsRes.data || productsRes;
         const productsList = Array.isArray(data) ? data : [];
         setFeaturedProducts(productsList);
 
-        // -------- Farmers --------
         const farmersList = Array.isArray(farmersRes) ? farmersRes : [];
         setFeaturedFarmers(farmersList.slice(0, 4));
 
-        // -------- Markets --------
         const marketsList = Array.isArray(marketsRes) ? marketsRes : [];
         setMarkets(marketsList.slice(0, 3));
 
-        // -------- Stats --------
         setStats({
           products:
             productsRes.meta?.total ||
@@ -93,8 +90,25 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  // ==================== ANIMATION VARIANTS ====================
+  // ============================================================
+  // HERO SEARCH → navigate to /products with filters
+  // ============================================================
+  const handleHeroSearch = () => {
+    const params = new URLSearchParams();
+    const q = searchQuery.trim();
+    if (q) params.set("search", q);
+    if (selectedDay) params.set("market_day", selectedDay);
 
+    const qs = params.toString();
+    navigate(qs ? `/products?${qs}` : "/products");
+  };
+
+  const handleDayClick = (d) => {
+    const day = d === "All Days" ? "" : d;
+    setSelectedDay(day);
+  };
+
+  // ==================== ANIMATION VARIANTS ====================
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: (i = 0) => ({
@@ -279,6 +293,12 @@ const HomePage = () => {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleHeroSearch();
+                        }
+                      }}
                       placeholder="Search heirloom tomatoes, honey, sourdough..."
                       className="hero-search-input"
                     />
@@ -296,6 +316,19 @@ const HomePage = () => {
                         </motion.button>
                       )}
                     </AnimatePresence>
+
+                    {/* Submit button */}
+                    <motion.button
+                      type="button"
+                      className="hero-search-submit"
+                      onClick={handleHeroSearch}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      aria-label="Search products"
+                      title="Search"
+                    >
+                      <Search size={16} />
+                    </motion.button>
                   </div>
 
                   <div className="hero-search-days">
@@ -307,9 +340,7 @@ const HomePage = () => {
                       <motion.button
                         key={d}
                         type="button"
-                        onClick={() =>
-                          setSelectedDay(d === "All Days" ? "" : d)
-                        }
+                        onClick={() => handleDayClick(d)}
                         className={`hero-day-btn ${
                           (d === "All Days" && !selectedDay) ||
                           selectedDay === d
@@ -854,8 +885,6 @@ const HomePage = () => {
           </div>
         </section>
       )}
-
-      {/* ADMIN — nothing shown */}
 
       <Footer />
     </div>
