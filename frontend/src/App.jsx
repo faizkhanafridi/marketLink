@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { NotificationProvider } from './context/NotificationContext';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -19,6 +20,8 @@ import FarmersPage from './pages/public/FarmersPage';
 import FarmerDetailPage from './pages/public/FarmerDetailPage';
 import ProductsPage from './pages/public/ProductsPage';
 import ProductDetailPage from './pages/public/ProductDetailPage';
+import NotificationsPage from './components/common/NotificationsPage';
+import AdminNotifications from './pages/admin/AdminNotifications';
 
 // Auth Pages
 import LoginPage from './pages/auth/LoginPage';
@@ -57,6 +60,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <NotificationProvider>
         <CartProvider>
           <FlyToCartProvider>                              
             <div className="app-container">
@@ -236,6 +240,8 @@ function App() {
                   }
                 />
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/admin/notifications" element={<AdminNotifications />} />
               </Routes>
 
               <FlyToCartLayer />                          
@@ -244,6 +250,7 @@ function App() {
             </div>
           </FlyToCartProvider>                           
         </CartProvider>
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );

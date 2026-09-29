@@ -6,5 +6,6 @@ export { marketApi } from './marketApi';
 export { reviewApi } from './reviewApi';
 export { favoriteApi } from './favoriteApi';
 export { adminApi } from './adminApi';
+export { categoryApi } from './categoryApi';
+export { notificationApi } from './notificationApi';   
 export { default as axiosInstance } from './axiosConfig';
-export { categoryApi } from './categoryApi';   // ← ADD THIS

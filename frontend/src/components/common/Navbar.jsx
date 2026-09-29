@@ -14,7 +14,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
-import Logo from './Logo';                      
+import Logo from './Logo';
+import NotificationBell from './NotificationBell';
 import '../../styles/navbar.css';
 
 const Navbar = () => {
@@ -133,7 +134,7 @@ const Navbar = () => {
               whileHover={{ rotate: -6, scale: 1.08 }}
               transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >
-              <Logo size={42} />                     {/* ✅ PURANA SVG HATA DIYA */}
+              <Logo size={42} />
             </motion.div>
             <div className="brand-text">
               <span className="brand-name">
@@ -173,6 +174,9 @@ const Navbar = () => {
         >
           {isAuthenticated ? (
             <>
+              {/* Notification bell — added next to cart */}
+              <NotificationBell />
+
               {user?.role === 'customer' && (
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                   <Link to="/customer/cart" className="cart-button" aria-label="Basket">
