@@ -9,6 +9,40 @@
   background: var(--color-cream);
 }
 
+/* ---------- Hero search submit button ---------- */
+.hero-search-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 9px;
+  background: #194d26;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.18s ease;
+  margin-left: 4px;
+}
+
+.hero-search-submit:hover {
+  background: #143e1f;
+}
+
+.hero-search-submit:active {
+  transform: scale(0.94);
+}
+
+/* On very small screens, tighten the input row */
+@media (max-width: 480px) {
+  .hero-search-submit {
+    width: 32px;
+    height: 32px;
+    margin-left: 2px;
+  }
+}
+
 /* ============================================================
    HERO SECTION
    ============================================================ */
